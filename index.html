@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07090d"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>HQ — The Rack</title>
+<style>
+:root{--red:#ff6477;--amber:#ffb14e;--green:#55e39a;--violet:#9b7cff;--cyan:#53d8ff;--pink:#ff5ccf;--gold:#ffc857}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:#06070a;color:#f7f8fb;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif}
+body{background:radial-gradient(circle at 8% 0%,#13202a 0,transparent 26%),radial-gradient(circle at 96% 20%,#1b142a 0,transparent 30%),#06070a}
+button{font:inherit} .view{max-width:680px;margin:auto;padding:28px 16px 60px}
+.ey{font-size:10px;letter-spacing:.27em;color:#9299a7;font-weight:800} h1{font-size:31px;margin:8px 0 2px;letter-spacing:-.035em} .sub{color:#969da9;font-size:13px}
+.glass{border:1px solid rgba(255,255,255,.16);border-top-color:rgba(255,255,255,.29);background:linear-gradient(135deg,rgba(255,255,255,.115),rgba(255,255,255,.035) 55%,rgba(255,255,255,.07));-webkit-backdrop-filter:blur(24px) saturate(155%);backdrop-filter:blur(24px) saturate(155%);box-shadow:inset 0 1px rgba(255,255,255,.13),0 12px 30px #0008}
+.project{-webkit-appearance:none;appearance:none;width:100%;color:inherit;text-align:left;margin-top:24px;padding:22px;border-radius:24px;position:relative;overflow:hidden;transform:translateZ(0);transition:transform .16s ease-out}
+.project:active{transform:translateZ(0) scale(.985)} .project-title{font-size:25px;font-weight:800;margin-top:8px;letter-spacing:-.025em} .project-sub{color:#9ca3af;font-size:13px;margin-top:4px}
+.project-foot{display:flex;align-items:center;gap:10px;margin-top:22px} .p-led{width:9px;height:9px;border-radius:50%;background:var(--violet);box-shadow:0 0 18px var(--violet)} .mono{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:#b5bbc5} .arrow{margin-left:auto;color:#89919e;font-size:22px}
+.bar{height:5px;background:#0d1015;border-radius:9px;margin-top:12px;overflow:hidden} .fill{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan),var(--green));transition:width .35s ease}
+#projectView{display:none;opacity:0;transform:translate3d(0,12px,0)} #projectView.show{display:block;animation:viewIn .38s cubic-bezier(.2,.75,.25,1) forwards}
+@keyframes viewIn{to{opacity:1;transform:translate3d(0,0,0)}} .back{border:0;background:transparent;color:#9da4af;padding:0 0 14px;font-weight:800;font-size:12px}
+.album-status{margin:20px 0 18px;padding:15px;border-radius:20px} .status-line{display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#b9bec8}
+.rack{display:grid;gap:13px} .track{--c:var(--red);-webkit-appearance:none;appearance:none;width:100%;min-height:76px;padding:15px;border-radius:18px;color:inherit;text-align:left;display:flex;align-items:center;gap:12px;position:relative;isolation:isolate;transform:translateZ(0);transition:transform .16s ease-out;border:1px solid rgba(255,255,255,.16);border-top-color:rgba(255,255,255,.28);background:linear-gradient(135deg,rgba(255,255,255,.115),rgba(255,255,255,.035) 55%,rgba(255,255,255,.07));-webkit-backdrop-filter:blur(24px) saturate(155%);backdrop-filter:blur(24px) saturate(155%);box-shadow:inset 0 1px rgba(255,255,255,.13),0 10px 25px #0008,0 0 20px color-mix(in srgb,var(--c) 18%,transparent)}
+.track:after{content:"";position:absolute;z-index:-1;left:9%;right:9%;bottom:-6px;height:14px;border-radius:50%;background:var(--c);filter:blur(14px);opacity:.56} .track:active{transform:translateZ(0) scale(.975)} .track.mix{--c:var(--amber)} .track.ready{--c:var(--green)}
+.track-led{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:var(--c);box-shadow:0 0 7px var(--c),0 0 17px var(--c)} .track-copy{min-width:0;flex:1} small{display:block;color:#7f8794;font:9px ui-monospace,monospace;letter-spacing:.16em} strong{display:block;margin-top:3px;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-state{font:9px ui-monospace,monospace;color:#aeb5c0;background:#090b0f99;border:1px solid #333842;padding:6px 7px;border-radius:6px;white-space:nowrap}
+/* shared-element clone */
+.morph{position:fixed;z-index:90;margin:0;pointer-events:none;will-change:transform,width,height,left,top,border-radius;transition:left .46s cubic-bezier(.2,.78,.2,1),top .46s cubic-bezier(.2,.78,.2,1),width .46s cubic-bezier(.2,.78,.2,1),height .46s cubic-bezier(.2,.78,.2,1),border-radius .46s cubic-bezier(.2,.78,.2,1),opacity .18s ease .30s}
+.overlay{position:fixed;inset:0;z-index:80;display:none;align-items:flex-end;justify-content:center;background:rgba(2,3,5,.35);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);opacity:0;transition:opacity .26s ease}
+.overlay.open{display:flex} .overlay.visible{opacity:1}
+.detail{--c:var(--red);width:min(100%,680px);min-height:54%;padding:18px 18px calc(24px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;border:1px solid rgba(255,255,255,.20);border-bottom:0;background:linear-gradient(145deg,rgba(34,37,45,.96),rgba(12,14,19,.96));-webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%);box-shadow:inset 0 1px rgba(255,255,255,.18),0 -10px 55px #000b,0 0 40px color-mix(in srgb,var(--c) 20%,transparent);opacity:0;transform:translate3d(0,105%,0);will-change:transform,opacity;transition:transform .52s cubic-bezier(.22,.82,.24,1),opacity .16s ease-out}
+.overlay.visible .detail{opacity:1;transform:translate3d(0,0,0)} .handle{width:42px;height:5px;border-radius:9px;background:#ffffff35;margin:0 auto 22px} .detail-head{display:flex;align-items:center;gap:12px} .bigled{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 24px var(--c)} .detail h2{font-size:28px;margin:4px 0 0} .channel{font:10px ui-monospace,monospace;color:#858d99;letter-spacing:.18em}
+.steps{display:grid;gap:12px;margin-top:28px} .step{-webkit-appearance:none;appearance:none;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.035));color:#d9dde4;border-radius:18px;padding:18px;text-align:left;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:800} .step span{font:10px ui-monospace,monospace;color:#8e96a2} .step.done{border-color:#55e39a66;background:#55e39a18;color:#dffff0} .close{margin-top:20px;width:100%;border:0;background:transparent;color:#89919e;padding:14px;font-weight:700}
+/* V1 disco */
+.detail.disco{animation:v1Disco 1.65s ease both} @keyframes v1Disco{0%{--c:#111;transform:scale(1)}12%{--c:var(--pink);transform:scale(.99)}28%{--c:var(--cyan);transform:scale(1.012)}44%{--c:var(--gold)}60%{--c:var(--violet);transform:scale(1.018)}76%{--c:var(--cyan)}100%{--c:var(--green);transform:scale(1)}}
+.note{text-align:center;color:#656d79;font-size:11px;margin-top:22px}
+@media(prefers-reduced-motion:reduce){.morph,.overlay,.detail,#projectView.show{transition:none;animation:none}}
+
+/* HQ V3.2 — long press editor */
+.press-menu{position:fixed;z-index:130;min-width:220px;padding:8px;border-radius:20px;opacity:0;transform:translate3d(0,8px,0) scale(.97);transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .14s ease;background:rgba(24,27,34,.88);border:1px solid rgba(255,255,255,.19);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);box-shadow:0 18px 55px #000c,inset 0 1px rgba(255,255,255,.14)}
+.press-menu.show{opacity:1;transform:translate3d(0,0,0) scale(1)}
+.press-menu button{display:block;width:100%;min-height:46px;border:0;border-bottom:1px solid rgba(255,255,255,.09);background:transparent;color:#f3f5f8;text-align:left;padding:0 13px;font-size:14px;font-weight:700}.press-menu button:last-child{border-bottom:0}.press-menu .danger{color:#ff7c89}
+.editor-shade{position:fixed;inset:0;z-index:140;display:none;align-items:flex-end;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:0;transition:opacity .18s}.editor-shade.open{display:flex}.editor-shade.show{opacity:1}
+.editor{width:100%;max-width:680px;margin:0 auto;padding:18px 18px calc(22px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:rgba(25,28,35,.96);border:1px solid rgba(255,255,255,.18);box-shadow:0 -18px 60px #000b;transform:translate3d(0,100%,0);transition:transform .32s cubic-bezier(.2,.8,.2,1)}.editor-shade.show .editor{transform:none}
+.editor h3{margin:4px 0 14px;font-size:19px}.editor input{width:100%;font-size:16px;color:white;background:#0c0e13;border:1px solid #343944;border-radius:14px;padding:14px;outline:none}.editor-actions{display:flex;gap:10px;margin-top:12px}.editor-actions button{flex:1;min-height:46px;border-radius:14px;border:1px solid #363c47;background:#171a20;color:#e9edf3;font-weight:800}.editor-actions .save{background:#f0f2f6;color:#111;border-color:#f0f2f6}
+.tasks{display:grid;gap:9px;margin-top:20px}.task{display:flex;align-items:center;gap:11px;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:15px;background:rgba(255,255,255,.045);font-size:13px}.task input{width:20px;height:20px;accent-color:#55e39a}.task.done span{text-decoration:line-through;color:#777f8b}
+.task-label{margin-top:24px;color:#858d99;font:10px ui-monospace,monospace;letter-spacing:.16em}
+
+</style></head><body>
+<section class="view" id="rackHome"><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
+<button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
+<div class="note">Fler projekt kan läggas till senare.</div></section>
+
+<main class="view" id="projectView"><button class="back" id="back" type="button">‹ THE RACK</button><div class="ey">LILLUMINATI RECORDS / PROJECT</div><h1>Blodstänk &amp; Skålar</h1><div class="sub">Lilleman &amp; Juan Havana · 20 låtar</div>
+<section class="album-status glass"><div class="status-line"><span>ALBUM STATUS</span><span id="count">0 / 20 READY</span></div><div class="bar"><i class="fill" id="fill"></i></div></section><section class="rack"><button class="track" type="button" data-i="0">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 01</small><strong>Nah Nah Nah</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="1">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 02</small><strong>BS&S</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="2">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 03</small><strong>Högre</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="3">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 04</small><strong>95</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="4">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 05</small><strong>Rikedom</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="5">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 06</small><strong>Rap</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="6">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 07</small><strong>Click Clack</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="7">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 08</small><strong>Jag vill upp</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="8">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 09</small><strong>Ryssen kommer</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="9">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 10</small><strong>Ålderskris</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="10">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 11</small><strong>Ha ha ha</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="11">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 12</small><strong>På din dörr</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="12">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 13</small><strong>Maskotar</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="13">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 14</small><strong>Ondskan</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="14">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 15</small><strong>Skiner</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="15">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 16</small><strong>Hicka/Dubai</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="16">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 17</small><strong>Svart bälte</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="17">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 18</small><strong>Panenka</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="18">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 19</small><strong>Champion</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button><button class="track" type="button" data-i="19">
+  <span class="track-led"></span>
+  <span class="track-copy"><small>CHANNEL 20</small><strong>Värdefullt</strong></span>
+  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+</button></section></main>
+
+<div class="overlay" id="overlay"><section class="detail" id="detail"><div class="handle"></div><div class="detail-head"><span class="bigled"></span><div><div class="channel" id="dchannel"></div><h2 id="dname"></h2></div></div><div class="task-label">TO DO</div><div class="tasks" id="tasks"></div><div class="steps"><button class="step" id="mix" type="button">MIX <span>NOT READY</span></button><button class="step" id="master" type="button">MASTER <span>NOT READY</span></button></div><button class="close" id="close" type="button">Stäng</button></section></div>
+
+
+<div class="press-menu" id="pressMenu">
+  <button type="button" data-act="rename">✎ &nbsp;Byt namn</button>
+  <button type="button" data-act="task">＋ &nbsp;Lägg till uppgift</button>
+</div>
+<div class="editor-shade" id="editorShade">
+  <section class="editor">
+    <h3 id="editorTitle">Redigera</h3>
+    <input id="editorInput" autocomplete="off">
+    <div class="editor-actions"><button id="editorCancel" type="button">Avbryt</button><button class="save" id="editorSave" type="button">Spara</button></div>
+  </section>
+</div>
+
+<script>
+(function(){
+let names=["Nah Nah Nah", "BS&S", "Högre", "95", "Rikedom", "Rap", "Click Clack", "Jag vill upp", "Ryssen kommer", "Ålderskris", "Ha ha ha", "På din dörr", "Maskotar", "Ondskan", "Skiner", "Hicka/Dubai", "Svart bälte", "Panenka", "Champion", "Värdefullt"], KEY="hq-rack-v3";
+let data={}, current=null, sourceCard=null, busy=false, editIndex=null, editMode=null, pressTimer=null, pressStart=null;
+let meta={};
+try{data=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+try{meta=JSON.parse(localStorage.getItem(KEY+"-meta")||"{}")}catch(e){}
+names=names.map((n,i)=>meta[i]&&meta[i].name?meta[i].name:n);
+const $=s=>document.querySelector(s), cards=[...document.querySelectorAll(".track")], overlay=$("#overlay"), detail=$("#detail");
+const state=i=>data[i]||{mix:false,master:false};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(KEY+"-meta",JSON.stringify(meta))}catch(e){}}
+function tasksFor(i){return meta[i]&&Array.isArray(meta[i].tasks)?meta[i].tasks:[]}
+function paint(){
+ let ready=0;
+ cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.querySelector(".track-state").textContent=x.mix&&x.master?"READY":x.mix?"MASTER NEXT":"MIX NEXT";if(x.mix&&x.master)ready++;});
+ $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";
+ $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
+ if(current!==null)paintDetail();
+}
+function paintDetail(){
+ let x=state(current), c=x.mix&&x.master?"#55e39a":x.mix?"#ffb14e":"#ff6477";detail.style.setProperty("--c",c);
+ $("#dchannel").textContent="CHANNEL "+String(current+1).padStart(2,"0");$("#dname").textContent=names[current];
+ const box=$("#tasks"), ts=tasksFor(current);box.innerHTML="";
+ if(!ts.length){box.innerHTML='<div style="color:#6f7783;font-size:12px;padding:3px 2px">Inga extra uppgifter</div>'}
+ ts.forEach((t,j)=>{let lab=document.createElement("label");lab.className="task"+(t.done?" done":"");let cb=document.createElement("input");cb.type="checkbox";cb.checked=!!t.done;let sp=document.createElement("span");sp.textContent=t.text;cb.addEventListener("change",()=>{t.done=cb.checked;save();paintDetail();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}});lab.append(cb,sp);box.appendChild(lab)});
+ [["#mix","mix"],["#master","master"]].forEach(a=>{let b=$(a[0]),on=x[a[1]];b.classList.toggle("done",on);b.querySelector("span").textContent=on?"✓ READY":"NOT READY"});
+}
+function openTrack(card,i){
+ if(busy)return;busy=true;current=i;sourceCard=card;paintDetail();
+ overlay.classList.add("open");
+ requestAnimationFrame(()=>requestAnimationFrame(()=>overlay.classList.add("visible")));
+ setTimeout(()=>{busy=false},500);
+}
+function closeTrack(){
+ if(busy)return;busy=true;overlay.classList.remove("visible");
+ setTimeout(()=>{overlay.classList.remove("open");current=null;sourceCard=null;busy=false},540);
+}
+function haptic(ms=18){try{if(navigator.vibrate)navigator.vibrate(ms)}catch(e){}}
+function hideMenu(){const m=$("#pressMenu");m.classList.remove("show");setTimeout(()=>{m.style.display="none"},160)}
+function showMenu(card,i,x,y){
+ editIndex=i;const m=$("#pressMenu");m.style.display="block";
+ const w=230,left=Math.max(12,Math.min(window.innerWidth-w-12,x-w/2)),top=Math.max(70,Math.min(window.innerHeight-130,y+10));
+ m.style.left=left+"px";m.style.top=top+"px";requestAnimationFrame(()=>m.classList.add("show"));haptic(30);
+}
+cards.forEach((c,i)=>{
+ let longed=false;
+ c.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;longed=false;pressStart={x:e.clientX,y:e.clientY};clearTimeout(pressTimer);pressTimer=setTimeout(()=>{longed=true;showMenu(c,i,e.clientX,e.clientY)},520)});
+ c.addEventListener("pointermove",e=>{if(pressStart&&Math.hypot(e.clientX-pressStart.x,e.clientY-pressStart.y)>12)clearTimeout(pressTimer)});
+ ["pointerup","pointercancel","pointerleave"].forEach(ev=>c.addEventListener(ev,()=>clearTimeout(pressTimer)));
+ c.addEventListener("click",e=>{if(longed){e.preventDefault();e.stopPropagation();longed=false;return}openTrack(c,i)});
+});
+document.addEventListener("pointerdown",e=>{if(!e.target.closest("#pressMenu")&&!e.target.closest(".track"))hideMenu()});
+$("#pressMenu").addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;editMode=b.dataset.act;hideMenu();
+ $("#editorTitle").textContent=editMode==="rename"?"Byt namn på låten":"Lägg till uppgift";
+ $("#editorInput").value=editMode==="rename"?names[editIndex]:"";
+ const sh=$("#editorShade");sh.classList.add("open");requestAnimationFrame(()=>sh.classList.add("show"));setTimeout(()=>$("#editorInput").focus(),260);
+});
+function closeEditor(){const sh=$("#editorShade");sh.classList.remove("show");setTimeout(()=>sh.classList.remove("open"),330)}
+$("#editorCancel").addEventListener("click",closeEditor);
+$("#editorSave").addEventListener("click",()=>{
+ const v=$("#editorInput").value.trim();if(!v)return;
+ meta[editIndex]=meta[editIndex]||{tasks:[]};meta[editIndex].tasks=meta[editIndex].tasks||[];
+ if(editMode==="rename"){meta[editIndex].name=v;names[editIndex]=v}else meta[editIndex].tasks.push({text:v,done:false});
+ save();paint();haptic(16);closeEditor();
+});
+$("#editorInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("#editorSave").click()});
+$("#close").addEventListener("click",closeTrack);overlay.addEventListener("click",e=>{if(e.target===overlay)closeTrack()});
+$("#mix").addEventListener("click",()=>{let x=state(current);x.mix=!x.mix;if(!x.mix)x.master=false;data[current]=x;save();paint()});
+$("#master").addEventListener("click",()=>{let x=state(current),was=x.mix&&x.master;if(!x.master){x.mix=true;x.master=true}else x.master=false;data[current]=x;save();paint();if(!was&&x.mix&&x.master){detail.classList.remove("disco");void detail.offsetWidth;detail.classList.add("disco");setTimeout(()=>{detail.classList.remove("disco");paintDetail()},1700)}});
+$("#openProject").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");h.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(.985)"}],{duration:260,easing:"ease-out"}).onfinish=()=>{h.style.display="none";p.classList.add("show");window.scrollTo(0,0)}});
+$("#back").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");p.classList.remove("show");p.style.display="none";h.style.display="block";h.animate([{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.75,.25,1)"});window.scrollTo(0,0)});
+paint();
+})();
+</script></body></html>
