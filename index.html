@@ -1,4 +1,88 @@
-<!doctype html><html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HQ · CTRL ROOM</title><link rel="stylesheet" href="shared/hq.css"><style>.musicfields{display:none;margin-top:14px}.musicfields.show{display:grid;gap:10px}.musicfields select{width:100%;margin-top:6px;border:1px solid #ffffff18;border-radius:15px;background:#0a0d12;color:#fff;padding:13px}.musicfields label{font:800 9px ui-monospace,monospace;color:#8993a1}.smart{display:none;margin-top:14px;padding:14px;border-radius:17px;border:1px solid #ffffff1b;background:#ffffff08}.smart.show{display:block}.smart small{display:block;color:#8993a1;font:800 9px ui-monospace,monospace;letter-spacing:.12em}.smart b{display:block;margin-top:7px;font-size:14px}.smart button{width:100%;margin-top:11px;border:1px solid #ffffff20;border-radius:13px;padding:11px;background:#ffffff12;color:#fff;font-weight:800}</style></head><body><main class="shell"><div class="ey">HQ</div><h1>CTRL ROOM</h1><p id="date" class="muted"></p><section class="glass hero"><div class="label">NU</div><h2>Allt samlat. En sak i taget.</h2><p>Fånga det som snurrar i huvudet först. Sortera senare.</p><button id="capture">＋ CAPTURE</button></section><div class="head"><b>NEXT</b><span id="count">0</span></div><div id="next" class="glass card muted">Ingen nästa åtgärd vald ännu.</div><div class="head"><b>INBOX</b><button id="clear" class="link">RENSA</button></div><div id="inbox"></div><nav class="grid"><a class="glass" href="calendar/index.html"><b>CALENDAR</b><span>Din kalender</span></a><a class="glass" href="rack/index.html"><b>THE RACK</b><span>Musikprojekt</span></a><a class="glass" href="workspace/index.html"><b>WORKSPACE</b><span>Jobb</span></a><a class="glass" href="home/index.html"><b>HOME</b><span>Privat</span></a></nav>
+<!doctype html><html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HQ · CTRL ROOM</title><link rel="stylesheet" href="shared/hq.css"><style>.musicfields{display:none;margin-top:14px}.musicfields.show{display:grid;gap:10px}.musicfields select{width:100%;margin-top:6px;border:1px solid #ffffff18;border-radius:15px;background:#0a0d12;color:#fff;padding:13px}.musicfields label{font:800 9px ui-monospace,monospace;color:#8993a1}.smart{display:none;margin-top:14px;padding:14px;border-radius:17px;border:1px solid #ffffff1b;background:#ffffff08}.smart.show{display:block}.smart small{display:block;color:#8993a1;font:800 9px ui-monospace,monospace;letter-spacing:.12em}.smart b{display:block;margin-top:7px;font-size:14px}.smart button{width:100%;margin-top:11px;border:1px solid #ffffff20;border-radius:13px;padding:11px;background:#ffffff12;color:#fff;font-weight:800}</style>
+<style id="hq-premium-liquid-ui">
+:root{--edge:rgba(184,207,235,.32);--muted2:#8794aa}
+body{
+ background:
+ radial-gradient(circle at 15% 4%,rgba(32,71,112,.17),transparent 28%),
+ radial-gradient(circle at 90% 28%,rgba(16,43,72,.10),transparent 26%),
+ #030609 !important;
+}
+.shell{max-width:760px}
+.shell>h1{font-size:clamp(42px,8vw,62px);letter-spacing:-.045em;margin-bottom:5px}
+.shell>.ey{color:#a9bbd5;letter-spacing:.28em}
+.muted{color:#8491a7!important}
+.glass{
+ border-color:rgba(174,200,230,.25)!important;
+ border-top-color:rgba(220,234,249,.38)!important;
+ background:linear-gradient(145deg,rgba(20,29,40,.78),rgba(8,13,20,.74))!important;
+ -webkit-backdrop-filter:blur(25px) saturate(145%);
+ backdrop-filter:blur(25px) saturate(145%);
+ box-shadow:inset 0 1px rgba(255,255,255,.06),0 12px 35px rgba(0,0,0,.24)!important;
+}
+.hero{
+ padding:27px 25px!important;border-radius:30px!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.09),0 18px 48px rgba(0,0,0,.30),0 0 34px rgba(55,126,199,.045)!important;
+}
+.hero h2{font-size:clamp(27px,5.2vw,38px)!important;letter-spacing:-.035em}
+.hero p{color:#91a2ba!important}
+#capture{
+ min-height:74px!important;border-radius:999px!important;color:#f8fbff!important;
+ letter-spacing:.14em!important;font-size:17px!important;
+ background:
+ radial-gradient(ellipse at 50% 5%,rgba(255,255,255,.10),transparent 47%),
+ linear-gradient(180deg,rgba(14,24,34,.82),rgba(5,10,16,.72))!important;
+ border:1px solid rgba(190,222,250,.50)!important;
+ border-top-color:rgba(239,249,255,.90)!important;
+ border-left-color:rgba(116,207,255,.72)!important;
+ border-right-color:rgba(255,163,130,.52)!important;
+ border-bottom-color:rgba(105,198,255,.62)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(165%);backdrop-filter:blur(22px) saturate(165%);
+ box-shadow:
+ inset 10px 0 18px -17px rgba(91,211,255,.95),
+ inset -10px 0 18px -17px rgba(255,142,105,.82),
+ inset 0 8px 16px -15px rgba(255,255,255,.95),
+ inset 0 -8px 15px -14px rgba(86,196,255,.8),
+ 0 0 0 5px rgba(100,180,230,.055),
+ 0 9px 26px rgba(0,0,0,.44),
+ 0 0 24px rgba(68,177,255,.10)!important;
+ transition:transform .12s ease,filter .12s ease;
+}
+#capture:active{transform:scale(.985);filter:brightness(.9)}
+.head{color:#9eb0c9!important;letter-spacing:.20em}
+.card{border-radius:24px!important}
+.premium-grid{gap:14px!important;margin-top:26px!important}
+.nav-card{
+ min-height:128px!important;border-radius:27px!important;padding:20px!important;
+ display:grid!important;grid-template-columns:64px 1fr 42px;gap:15px;align-items:center;
+ text-decoration:none!important;position:relative;overflow:hidden;
+}
+.nav-card .nav-icon{
+ width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-style:normal;
+ font-size:28px;background:rgba(255,255,255,.035);border:1px solid currentColor;
+ box-shadow:0 0 25px color-mix(in srgb,currentColor 30%,transparent);
+}
+.nav-copy{min-width:0}.nav-copy b{display:block!important;font-size:18px!important;color:#f7f9fc!important}
+.nav-copy span{display:block!important;margin-top:6px!important;font-size:13px!important;line-height:1.25;color:#8fa0b8!important}
+.nav-arrow{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:29px;color:#dce8f5;background:#ffffff08;border:1px solid #ffffff15}
+.rack-card{color:#ff5f9f!important}.work-card{color:#4198ff!important}.home-card{color:#28e4a4!important}.cal-card{color:#9d68ff!important}
+.rack-card:after,.work-card:after,.home-card:after,.cal-card:after{content:"";position:absolute;width:95px;height:95px;border-radius:50%;left:-15px;top:16px;background:currentColor;filter:blur(48px);opacity:.12;pointer-events:none}
+#inbox .item{border-radius:23px!important}
+#wrap .sheet{background:linear-gradient(150deg,rgba(24,32,44,.96),rgba(8,13,20,.97))!important;border-top-color:rgba(215,232,249,.34)!important}
+#exportHQ,#importHQ,#save{border-radius:18px!important}
+@media(max-width:560px){
+ .premium-grid{grid-template-columns:1fr 1fr!important}
+ .nav-card{grid-template-columns:46px 1fr!important;min-height:145px!important;padding:17px!important}
+ .nav-card .nav-icon{width:44px;height:44px;font-size:23px}
+ .nav-arrow{display:none}
+ .nav-copy b{font-size:15px!important}.nav-copy span{font-size:11px!important}
+}
+</style>
+</head><body><main class="shell"><div class="ey">HQ</div><h1>CTRL ROOM</h1><p id="date" class="muted"></p><section class="glass hero"><div class="label">NU</div><h2>Allt samlat. En sak i taget.</h2><p>Fånga det som snurrar i huvudet först. Sortera senare.</p><button id="capture">＋ CAPTURE</button></section><div class="head"><b>NEXT</b><span id="count">0</span></div><div id="next" class="glass card muted">Ingen nästa åtgärd vald ännu.</div><div class="head"><b>INBOX</b><button id="clear" class="link">RENSA</button></div><div id="inbox"></div><nav class="grid premium-grid">
+<a class="glass nav-card rack-card" href="rack/index.html"><i class="nav-icon">♫</i><span class="nav-copy"><b>THE RACK</b><span>Musik &amp; kreativa projekt</span></span><i class="nav-arrow">›</i></a>
+<a class="glass nav-card work-card" href="workspace/index.html"><i class="nav-icon">▣</i><span class="nav-copy"><b>WORKSPACE</b><span>Jobb &amp; uppgifter</span></span><i class="nav-arrow">›</i></a>
+<a class="glass nav-card home-card" href="home/index.html"><i class="nav-icon">⌂</i><span class="nav-copy"><b>HOME</b><span>Privat &amp; familj</span></span><i class="nav-arrow">›</i></a>
+<a class="glass nav-card cal-card" href="calendar/index.html"><i class="nav-icon">▦</i><span class="nav-copy"><b>CALENDAR</b><span>Schema &amp; viktiga datum</span></span><i class="nav-arrow">›</i></a>
+</nav>
 <div class="head"><b>DATA</b><span>BACKUP</span></div>
 <div class="glass card">
   <div style="font-size:12px;color:#9aa3af;margin-bottom:12px">Spara en kopia av all HQ-data eller återställ från en tidigare backup.</div>
