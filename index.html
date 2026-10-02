@@ -148,21 +148,20 @@ $("#importFile").addEventListener("change",async e=>{
 });
 $("#date").textContent=new Date().toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();render();</script>
 <script id="hq-swipe-nav">
-(() => {
-  let startX=0,startY=0,active=false;
-  document.addEventListener("touchstart",e=>{
-    if(e.touches.length!==1)return;
-    const t=e.touches[0]; startX=t.clientX; startY=t.clientY; active=true;
-  },{passive:true});
-  document.addEventListener("touchend",e=>{
-    if(!active||!e.changedTouches.length)return;
-    active=false;
-    const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;
-    if(Math.abs(dx)<70||Math.abs(dx)<=Math.abs(dy)*1.25)return;
-    if(dx<0) location.href="calendar/index.html";
-    else location.href="home/index.html";
-  },{passive:true});
+(()=>{
+ let x0=0,y0=0,tracking=false;
+ document.addEventListener("touchstart",e=>{
+   if(e.touches.length!==1)return;
+   const t=e.touches[0]; x0=t.clientX; y0=t.clientY; tracking=true;
+ },{passive:true});
+ document.addEventListener("touchend",e=>{
+   if(!tracking||!e.changedTouches.length)return;
+   tracking=false;
+   const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+   if(Math.abs(dx)<70 || Math.abs(dx)<=Math.abs(dy)*1.25)return;
+   if(dx<0) window.location.assign("rack/index.html");
+   else window.location.assign("calendar/index.html");
+ },{passive:true});
 })();
 </script>
-
 </body></html>
