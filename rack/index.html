@@ -243,105 +243,286 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
 .track.ready.just-ready{animation:readyArrival 1.15s cubic-bezier(.2,.75,.2,1) 1!important}
 @keyframes readyArrival{0%{filter:brightness(1)}32%{filter:brightness(1.6)}62%{filter:brightness(1.14)}100%{filter:brightness(1)}}
 
+
+/* =========================================================
+   THE RACK — ORIGINAL CONCEPT MATCH PASS
+   ========================================================= */
+#projectView{padding-top:18px!important}
+.rack-topline{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rack-topline .back{margin:0!important}
+.rack-more,.filter-menu{
+  appearance:none;border:1px solid rgba(170,196,225,.28);color:#dce5f0;
+  background:rgba(8,13,20,.72);box-shadow:inset 0 1px rgba(255,255,255,.10);
+  border-radius:999px
+}
+.rack-more{width:38px;height:38px;font-size:13px;letter-spacing:2px}
+.rack-brand{color:#ff3d91;font-size:9px;font-weight:900;letter-spacing:.12em;margin-top:4px}
+.rack-title{font-size:34px!important;line-height:.95!important;letter-spacing:.025em!important;margin:5px 0 7px!important}
+.rack-album-name{font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;color:#8f9aae;letter-spacing:.16em;margin-bottom:16px}
+
+.concept-project{
+  display:grid!important;grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;
+  padding:13px!important;border-radius:19px!important;align-items:center!important;
+  background:
+    radial-gradient(circle at 0% 100%,rgba(255,45,132,.11),transparent 37%),
+    radial-gradient(circle at 100% 100%,rgba(57,216,255,.10),transparent 38%),
+    linear-gradient(145deg,rgba(20,29,39,.94),rgba(7,11,17,.96))!important;
+  border:1px solid rgba(183,208,237,.38)!important;
+  border-top-color:rgba(242,249,255,.55)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.15),0 10px 30px rgba(0,0,0,.44),0 0 18px rgba(255,45,132,.07)!important
+}
+.concept-project .album-art-wrap{margin:0!important;width:92px!important;height:92px!important}
+.concept-project .album-art{
+  width:92px!important;height:92px!important;aspect-ratio:1!important;max-height:none!important;
+  border-radius:12px!important;border-color:rgba(255,255,255,.34)!important
+}
+.concept-project .album-placeholder{gap:4px!important}
+.concept-project .album-placeholder .art-icon{width:29px!important;height:29px!important;border-radius:8px!important;font-size:13px!important}
+.concept-project .album-placeholder b{font-size:7px!important;letter-spacing:.12em!important}
+.project-info{min-width:0}
+.project-kicker{font:700 7px ui-monospace,SFMono-Regular,Menlo,monospace;color:#8793a6;letter-spacing:.16em}
+.project-name{font-size:17px;font-weight:850;color:#f5f7fb;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-meta{font-size:11px;color:#9ba5b5;margin-top:4px}
+.project-progress-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:9px;align-items:center;margin-top:14px}
+.project-progress-row .bar{height:6px!important;margin:0!important;background:#121a24!important}
+.project-progress-row .fill{
+  background:linear-gradient(90deg,#ff3c91 0%,#ff4aa0 62%,#56d9ff 100%)!important;
+  box-shadow:0 0 10px rgba(255,61,145,.42)!important
+}
+.project-progress-row b{font-size:10px;color:#dce2eb;text-align:right}
+
+.filter-row{display:flex;align-items:center;gap:7px;margin:12px 0 10px}
+.rack-filter{
+  appearance:none;white-space:nowrap;border:1px solid rgba(150,176,207,.20);
+  border-radius:999px;padding:8px 11px;background:rgba(11,16,23,.86);color:#8994a6;
+  font:800 7px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;
+  box-shadow:inset 0 1px rgba(255,255,255,.06)
+}
+.rack-filter span{margin-left:3px}
+.rack-filter.active{
+  color:#160712;border-color:rgba(255,109,174,.66);
+  background:linear-gradient(180deg,#ff5aa7,#ff348c);
+  box-shadow:0 0 8px rgba(255,56,145,.52),0 0 20px rgba(255,46,137,.25),inset 0 1px rgba(255,255,255,.38)
+}
+.filter-menu{margin-left:auto;flex:0 0 34px;width:34px;height:34px;font-size:15px}
+.compact-status{display:none!important}
+
+/* Compact channel strips */
+.rack{display:flex!important;flex-direction:column!important;gap:6px!important}
+.track{
+  --rowGlow:rgba(255,64,95,.10);
+  position:relative!important;height:59px!important;min-height:59px!important;
+  display:grid!important;grid-template-columns:28px minmax(0,1fr) auto!important;
+  gap:8px!important;align-items:center!important;
+  padding:7px 10px!important;border-radius:14px!important;overflow:visible!important;
+  background:
+    radial-gradient(ellipse at 0% 50%,var(--rowGlow),transparent 34%),
+    linear-gradient(110deg,rgba(11,17,24,.97),rgba(5,10,15,.98))!important;
+  border:1px solid rgba(144,170,201,.24)!important;border-top-color:rgba(205,220,238,.31)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.055),0 6px 15px rgba(0,0,0,.31)!important
+}
+.track-led{
+  width:13px!important;height:13px!important;justify-self:center!important;
+  background:#ff425f!important;border:1px solid rgba(255,180,190,.50)!important;
+  box-shadow:0 0 5px #ff536d,0 0 13px rgba(255,55,85,.72),0 0 23px rgba(255,45,77,.32)!important
+}
+.track-copy{min-width:0!important;overflow:hidden!important;align-self:center!important}
+.track-copy small{font-size:6.8px!important;line-height:8px!important;margin:0 0 2px!important;color:#788495!important;letter-spacing:.16em!important}
+.track-copy strong{font-size:12.5px!important;line-height:15px!important;margin:0!important;color:#f3f5f8!important}
+.track-ticker{height:11px!important;line-height:11px!important;margin:2px 0 0!important}
+.track-ticker-inner{font-size:7px!important;line-height:11px!important;color:#8993a3!important}
+
+.track-actions{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.mix-pill,.master-pill{
+  display:inline-flex;align-items:center;justify-content:center;height:27px;min-width:43px;padding:0 8px;
+  border-radius:999px;border:1px solid rgba(131,155,185,.20);
+  background:linear-gradient(180deg,rgba(29,40,53,.94),rgba(15,23,33,.95));
+  color:#8793a5;font:800 6.7px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;
+  box-shadow:inset 0 1px rgba(255,255,255,.06)
+}
+.dots{font-size:16px;color:#8490a2;line-height:1;padding-left:1px}
+
+/* Partially complete = amber LED, completed MIX pill lights up */
+.track.partial{--rowGlow:rgba(255,168,45,.075)}
+.track.partial .track-led{
+  background:#ffad38!important;border-color:rgba(255,223,165,.58)!important;
+  box-shadow:0 0 5px #ffc25e,0 0 13px rgba(255,171,52,.72),0 0 23px rgba(255,158,31,.30)!important
+}
+.track.partial .mix-pill{
+  color:#fff0f7;border-color:rgba(255,72,154,.58);
+  background:linear-gradient(180deg,rgba(255,53,143,.88),rgba(169,24,93,.88));
+  box-shadow:0 0 7px rgba(255,57,148,.62),0 0 17px rgba(255,44,137,.25),inset 0 1px rgba(255,255,255,.28)
+}
+
+/* READY IN LIST = like the LEFT SIDE of the approved concept:
+   dark card, bright local LED + compact green MIX/MASTER pills.
+   NO giant radioactive halo around the entire card. */
+.track.ready{
+  --rowGlow:rgba(49,255,149,.095);
+  border-color:rgba(65,235,148,.28)!important;
+  background:
+    radial-gradient(circle at 7% 50%,rgba(47,255,147,.13),transparent 20%),
+    linear-gradient(110deg,rgba(7,26,20,.97),rgba(5,14,15,.99) 58%,rgba(6,22,18,.97))!important;
+  box-shadow:inset 0 1px rgba(199,255,226,.10),0 0 8px rgba(42,255,145,.09),0 6px 15px rgba(0,0,0,.34)!important
+}
+.track.ready::before,.track.ready::after{display:none!important}
+.track.ready .track-led{
+  background:#45ffa0!important;border-color:rgba(210,255,232,.74)!important;
+  box-shadow:0 0 4px #c5ffdd,0 0 10px #40ff9b,0 0 19px rgba(50,255,150,.82),0 0 29px rgba(42,255,143,.35)!important
+}
+.track.ready .mix-pill,.track.ready .master-pill{
+  color:#cffff0!important;border-color:rgba(63,255,158,.46)!important;
+  background:linear-gradient(180deg,rgba(29,184,105,.32),rgba(8,69,43,.34))!important;
+  box-shadow:0 0 6px rgba(50,255,150,.38),0 0 14px rgba(42,255,143,.16),inset 0 1px rgba(220,255,235,.17)!important
+}
+.track.ready .mix-pill::before,.track.ready .master-pill::before{content:"✓";margin-right:4px;color:#77ffb8}
+.track.ready strong{color:#f3fff8!important;text-shadow:none!important}
+.track.ready .track-ticker-inner{color:#8fb7a0!important}
+.track.ready.just-ready{animation:readyArrivalCompact .9s ease-out 1!important}
+@keyframes readyArrivalCompact{0%{filter:brightness(1)}35%{filter:brightness(1.32)}100%{filter:brightness(1)}}
+
+/* Detail view keeps the BIG approved green glow */
+.detail .action.done,#mix.done,#master.done{
+  border-color:rgba(72,255,160,.72)!important;
+  background:
+    radial-gradient(ellipse at 50% 110%,rgba(35,255,140,.25),transparent 55%),
+    linear-gradient(180deg,rgba(10,70,42,.86),rgba(4,28,20,.94))!important;
+  box-shadow:inset 0 1px rgba(220,255,235,.28),0 0 8px rgba(55,255,155,.68),0 0 22px rgba(40,255,145,.40),0 0 42px rgba(25,255,132,.20)!important
+}
+
+/* iPhone: keep enough width for two status pills */
+@media(max-width:390px){
+  .concept-project{grid-template-columns:82px minmax(0,1fr)!important}
+  .concept-project .album-art-wrap,.concept-project .album-art{width:82px!important;height:82px!important}
+  .track{grid-template-columns:25px minmax(0,1fr) auto!important;padding-left:8px!important;padding-right:8px!important}
+  .mix-pill,.master-pill{min-width:38px;padding:0 6px;font-size:6px}
+}
+
+
+.track.partial .master-pill{color:#8793a5!important;border-color:rgba(131,155,185,.20)!important;background:linear-gradient(180deg,rgba(29,40,53,.94),rgba(15,23,33,.95))!important;box-shadow:inset 0 1px rgba(255,255,255,.06)!important}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
 <div class="note">Fler projekt kan läggas till senare.</div></section>
 
-<main class="view" id="projectView"><button class="back" id="back" type="button">‹ THE RACK</button><div class="ey">LILLUMINATI RECORDS / PROJECT</div><h1>Blodstänk &amp; Skålar</h1><div class="sub">Lilleman &amp; Juan Havana · 20 låtar</div>
+<main class="view" id="projectView">
+<div class="rack-topline"><button class="back" id="back" type="button">‹ HQ</button><button class="rack-more" type="button" aria-label="Mer">•••</button></div>
+<div class="rack-brand">HQ</div>
+<h1 class="rack-title">THE RACK</h1>
+<div class="rack-album-name">BLODSTÄNK &amp; SKÅLAR</div>
 
-<div class="album-art-wrap">
-  <button class="album-art" id="albumArtButton" type="button" aria-label="Lägg till albumomslag">
-    <img id="albumArtImage" alt="Albumomslag">
-    <span class="album-placeholder">
-      <span class="art-icon">▧</span>
-      <b>Lägg till omslag</b>
-      <span>TRYCK FÖR ATT VÄLJA BILD</span>
-    </span>
-    <span class="art-actions"><span>BYT OMSLAG</span></span>
-  </button>
-  <input id="albumArtInput" type="file" accept="image/*">
+<section class="concept-project glass">
+  <div class="album-art-wrap">
+    <button class="album-art" id="albumArtButton" type="button" aria-label="Lägg till albumomslag">
+      <img id="albumArtImage" alt="Albumomslag">
+      <span class="album-placeholder">
+        <span class="art-icon">▧</span>
+        <b>OMSLAG</b>
+      </span>
+      <span class="art-actions"><span>BYT</span></span>
+    </button>
+    <input id="albumArtInput" type="file" accept="image/*">
+  </div>
+  <div class="project-info">
+    <div class="project-kicker">PROJEKT</div>
+    <div class="project-name">Blodstänk &amp; Skålar</div>
+    <div class="project-meta">20 låtar · Album</div>
+    <div class="project-progress-row">
+      <div class="bar"><i class="fill" id="fill"></i></div>
+      <b id="percent">0%</b>
+    </div>
+  </div>
+</section>
+
+<div class="filter-row">
+  <button class="rack-filter active" data-filter="all">ALLA <span id="allCount">20</span></button>
+  <button class="rack-filter" data-filter="open">EJ KLARA <span id="openCount">20</span></button>
+  <button class="rack-filter" data-filter="ready">KLARA <span id="readyCount">0</span></button>
+  <button class="filter-menu" type="button">☷</button>
 </div>
-<section class="album-status glass"><div class="status-line"><span>ALBUM STATUS</span><span id="count">0 / 20 READY</span></div><div class="bar"><i class="fill" id="fill"></i></div></section><section class="rack"><button class="track" type="button" data-i="0">
+
+<section class="album-status glass compact-status"><div class="status-line"><span>ALBUM STATUS</span><span id="count">0 / 20 READY</span></div></section>
+<section class="rack"><button class="track" type="button" data-i="0">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 01</small><strong>Nah Nah Nah</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="1">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 02</small><strong>BS&S</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="2">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 03</small><strong>Högre</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="3">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 04</small><strong>95</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="4">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 05</small><strong>Rikedom</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="5">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 06</small><strong>Rap</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="6">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 07</small><strong>Click Clack</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="7">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 08</small><strong>Jag vill upp</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="8">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 09</small><strong>Ryssen kommer</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="9">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 10</small><strong>Ålderskris</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="10">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 11</small><strong>Ha ha ha</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="11">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 12</small><strong>På din dörr</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="12">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 13</small><strong>Maskotar</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="13">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 14</small><strong>Ondskan</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="14">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 15</small><strong>Skiner</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="15">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 16</small><strong>Hicka/Dubai</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="16">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 17</small><strong>Svart bälte</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="17">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 18</small><strong>Panenka</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="18">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 19</small><strong>Champion</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button><button class="track" type="button" data-i="19">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 20</small><strong>Värdefullt</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
-  <span class="track-state">MIX NEXT</span><span class="arrow">›</span>
+  <span class="track-actions"><span class="mix-pill">MIX</span><span class="master-pill">MASTER</span><span class="dots">⋮</span></span>
 </button></section></main>
 
 <div class="overlay" id="overlay"><section class="detail" id="detail"><div class="handle"></div><div class="detail-head"><span class="bigled"></span><div><div class="channel" id="dchannel"></div><h2 id="dname"></h2></div></div><div class="task-label">TO DO</div><div class="tasks" id="tasks"></div><div class="steps"><button class="step" id="mix" type="button">MIX <span>NOT READY</span></button><button class="step" id="master" type="button">MASTER <span>NOT READY</span></button></div><button class="close" id="close" type="button">Stäng</button></section></div>
@@ -428,9 +609,10 @@ function celebrateReady(i){
 
 function paint(){
  let ready=0;
- cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));c.querySelector(".track-state").textContent=x.mix&&x.master?"● READY":x.mix?"MASTER":"MIX";setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
- $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";
+ cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));let mp=c.querySelector(".mix-pill"),mtp=c.querySelector(".master-pill");if(mp)mp.classList.toggle("on",x.mix);if(mtp)mtp.classList.toggle("on",x.master);setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
+ $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";$("#readyCount").textContent=ready;$("#openCount").textContent=names.length-ready;$("#allCount").textContent=names.length;$("#percent").textContent=Math.round(ready/names.length*100)+"%";
  $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
+ cards.forEach((c,i)=>{const x=state(i),isReady=x.mix&&x.master;c.style.display=(activeFilter==="all"||(activeFilter==="ready"&&isReady)||(activeFilter==="open"&&!isReady))?"grid":"none";});
  if(current!==null)paintDetail();
 }
 function paintDetail(){
@@ -486,6 +668,20 @@ $("#mix").addEventListener("click",()=>{let x=state(current);x.mix=!x.mix;if(!x.
 $("#master").addEventListener("click",()=>{let i=current,x=state(i),was=x.mix&&x.master;if(!x.master){x.mix=true;x.master=true}else x.master=false;data[i]=x;save();paint();if(!was&&x.mix&&x.master){celebrateReady(i);detail.classList.remove("disco");void detail.offsetWidth;detail.classList.add("disco");setTimeout(()=>{detail.classList.remove("disco");paintDetail()},1100)}});
 $("#openProject").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");h.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(.985)"}],{duration:260,easing:"ease-out"}).onfinish=()=>{h.style.display="none";p.classList.add("show");window.scrollTo(0,0)}});
 $("#back").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");p.classList.remove("show");p.style.display="none";h.style.display="block";h.animate([{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.75,.25,1)"});window.scrollTo(0,0)});
+
+
+let activeFilter="all";
+document.querySelectorAll(".rack-filter").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  activeFilter=btn.dataset.filter;
+  document.querySelectorAll(".rack-filter").forEach(b=>b.classList.toggle("active",b===btn));
+  cards.forEach((c,i)=>{
+   const x=state(i),isReady=x.mix&&x.master;
+   c.style.display=(activeFilter==="all"||(activeFilter==="ready"&&isReady)||(activeFilter==="open"&&!isReady))?"grid":"none";
+  });
+  haptic(12);
+ });
+});
 
 const artBtn=$("#albumArtButton"),artInput=$("#albumArtInput");
 if(artBtn&&artInput){
