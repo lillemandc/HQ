@@ -53,12 +53,101 @@ button{font:inherit} .view{max-width:680px;margin:auto;padding:28px 16px 60px}
 .track.ready{animation:readyBreath 2.8s ease-in-out infinite}.track.ready .track-led{animation:readyLed 2.8s ease-in-out infinite}
 @keyframes readyBreath{0%,100%{box-shadow:inset 0 1px rgba(255,255,255,.18),0 13px 30px rgba(0,0,0,.48),0 0 17px rgba(85,227,154,.10)}50%{box-shadow:inset 0 1px rgba(255,255,255,.22),0 15px 34px rgba(0,0,0,.52),0 0 28px rgba(85,227,154,.24)}}
 @keyframes readyLed{0%,100%{opacity:.78;transform:scale(.92)}50%{opacity:1;transform:scale(1.12);box-shadow:0 0 9px var(--green),0 0 24px rgba(85,227,154,.72)}}
+
+/* HQ RACK V2.1 — alignment, READY signature, album art */
+.track-copy{min-width:0;overflow:hidden}
+.track-ticker{
+  margin-left:0!important;
+  padding-left:0!important;
+  width:100%;
+  max-width:100%;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 91%,transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0%,#000 91%,transparent 100%);
+}
+.track-ticker-inner{padding-left:0!important}
+
+/* Permanent READY identity */
+.track.ready{
+  border-color:rgba(85,227,154,.55)!important;
+  border-top-color:rgba(198,255,226,.72)!important;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(85,227,154,.12),transparent 35%),
+    linear-gradient(145deg,rgba(16,37,31,.92),rgba(7,14,14,.94) 62%)!important;
+  box-shadow:
+    inset 0 1px rgba(220,255,238,.22),
+    0 13px 30px rgba(0,0,0,.48),
+    0 0 28px rgba(85,227,154,.22)!important;
+}
+.track.ready .track-ticker-inner{color:#9de9bf}
+.track.ready strong{color:#effff6}
+.track.ready .track-led{background:var(--green);box-shadow:0 0 8px var(--green),0 0 22px rgba(85,227,154,.72)}
+.track.ready.just-ready{overflow:hidden}
+.track.ready.just-ready:before{
+  content:"";position:absolute;z-index:2;top:-20%;bottom:-20%;width:38%;
+  left:-48%;pointer-events:none;transform:skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(183,255,218,.30),transparent);
+  filter:blur(3px);animation:readySweep 1.15s cubic-bezier(.2,.72,.2,1) 1;
+}
+.track.ready.just-ready .track-led{animation:readyTriple .95s ease-out 1}
+@keyframes readySweep{to{left:115%}}
+@keyframes readyTriple{
+  0%,100%{transform:scale(1)}
+  18%{transform:scale(1.55)}
+  34%{transform:scale(1)}
+  52%{transform:scale(1.45)}
+  68%{transform:scale(1)}
+  84%{transform:scale(1.35)}
+}
+
+/* Album art */
+.album-art-wrap{margin:18px 0 20px}
+.album-art{
+  -webkit-appearance:none;appearance:none;width:100%;aspect-ratio:16/8.6;
+  border-radius:27px;overflow:hidden;position:relative;padding:0;color:#eaf0f8;
+  border:1px solid rgba(183,207,235,.28);border-top-color:rgba(245,250,255,.50);
+  background:
+    radial-gradient(circle at 20% 0%,rgba(83,216,255,.11),transparent 36%),
+    radial-gradient(circle at 85% 100%,rgba(155,124,255,.10),transparent 35%),
+    linear-gradient(145deg,rgba(23,30,40,.91),rgba(7,10,15,.94));
+  box-shadow:inset 0 1px rgba(255,255,255,.15),0 14px 36px rgba(0,0,0,.45);
+  text-align:center;
+}
+.album-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.album-art.has-art img{display:block}
+.album-art.has-art .album-placeholder{opacity:0}
+.album-art:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 1px rgba(255,255,255,.18)}
+.album-placeholder{position:absolute;inset:0;display:grid;place-content:center;gap:8px;transition:opacity .2s}
+.album-placeholder .art-icon{
+  width:54px;height:54px;margin:auto;border-radius:17px;display:grid;place-items:center;
+  border:1px solid rgba(198,221,246,.28);background:rgba(255,255,255,.045);
+  font-size:23px;color:#a9b7ca
+}
+.album-placeholder b{font-size:14px;letter-spacing:.04em}
+.album-placeholder span{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:#7f8a9b;letter-spacing:.14em}
+.art-actions{display:none;position:absolute;right:12px;bottom:12px;z-index:4}
+.album-art.has-art .art-actions{display:block}
+.art-actions span{display:block;padding:8px 11px;border-radius:999px;background:rgba(5,8,12,.62);border:1px solid rgba(255,255,255,.20);-webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);font:9px ui-monospace,monospace;letter-spacing:.10em;color:#eef4fb}
+#albumArtInput{display:none}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
 <div class="note">Fler projekt kan läggas till senare.</div></section>
 
 <main class="view" id="projectView"><button class="back" id="back" type="button">‹ THE RACK</button><div class="ey">LILLUMINATI RECORDS / PROJECT</div><h1>Blodstänk &amp; Skålar</h1><div class="sub">Lilleman &amp; Juan Havana · 20 låtar</div>
+
+<div class="album-art-wrap">
+  <button class="album-art" id="albumArtButton" type="button" aria-label="Lägg till albumomslag">
+    <img id="albumArtImage" alt="Albumomslag">
+    <span class="album-placeholder">
+      <span class="art-icon">▧</span>
+      <b>Lägg till omslag</b>
+      <span>TRYCK FÖR ATT VÄLJA BILD</span>
+    </span>
+    <span class="art-actions"><span>BYT OMSLAG</span></span>
+  </button>
+  <input id="albumArtInput" type="file" accept="image/*">
+</div>
 <section class="album-status glass"><div class="status-line"><span>ALBUM STATUS</span><span id="count">0 / 20 READY</span></div><div class="bar"><i class="fill" id="fill"></i></div></section><section class="rack"><button class="track" type="button" data-i="0">
   <span class="track-led"></span>
   <span class="track-copy"><small>CHANNEL 01</small><strong>Nah Nah Nah</strong><div class="track-ticker"><span class="track-ticker-inner"></span></div></span>
@@ -180,6 +269,35 @@ function setTicker(el,text){
   if(overflow>4){el.style.setProperty("--ticker-from",box.clientWidth+"px");el.style.setProperty("--ticker-to",-(el.scrollWidth+18)+"px");el.style.setProperty("--ticker-speed",Math.max(7,(el.scrollWidth+box.clientWidth)/34)+"s");el.classList.add("scroll")}
  });
 }
+
+const ART_DB="hq-media-v1", ART_STORE="covers", ART_KEY="blodstank-skalar";
+function artDB(){
+ return new Promise((resolve,reject)=>{
+  const r=indexedDB.open(ART_DB,1);
+  r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(ART_STORE))db.createObjectStore(ART_STORE)};
+  r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);
+ });
+}
+async function saveArt(blob){
+ const db=await artDB();
+ await new Promise((resolve,reject)=>{const tx=db.transaction(ART_STORE,"readwrite");tx.objectStore(ART_STORE).put(blob,ART_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+ db.close();
+}
+async function loadArt(){
+ try{
+  const db=await artDB();
+  const blob=await new Promise((resolve,reject)=>{const tx=db.transaction(ART_STORE,"readonly");const r=tx.objectStore(ART_STORE).get(ART_KEY);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+  db.close();
+  if(blob){const img=$("#albumArtImage"),btn=$("#albumArtButton");img.src=URL.createObjectURL(blob);btn.classList.add("has-art")}
+ }catch(e){}
+}
+function celebrateReady(i){
+ const c=cards[i];if(!c)return;
+ c.classList.remove("just-ready");void c.offsetWidth;c.classList.add("just-ready");
+ setTimeout(()=>c.classList.remove("just-ready"),1250);
+ try{navigator.vibrate&&navigator.vibrate([20,55,20])}catch(e){}
+}
+
 function paint(){
  let ready=0;
  cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.querySelector(".track-state").textContent=x.mix&&x.master?"READY":x.mix?"MASTER NEXT":"MIX NEXT";setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
@@ -237,9 +355,21 @@ $("#editorSave").addEventListener("click",()=>{
 $("#editorInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("#editorSave").click()});
 $("#close").addEventListener("click",closeTrack);overlay.addEventListener("click",e=>{if(e.target===overlay)closeTrack()});
 $("#mix").addEventListener("click",()=>{let x=state(current);x.mix=!x.mix;if(!x.mix)x.master=false;data[current]=x;save();paint()});
-$("#master").addEventListener("click",()=>{let x=state(current),was=x.mix&&x.master;if(!x.master){x.mix=true;x.master=true}else x.master=false;data[current]=x;save();paint();if(!was&&x.mix&&x.master){detail.classList.remove("disco");void detail.offsetWidth;detail.classList.add("disco");setTimeout(()=>{detail.classList.remove("disco");paintDetail()},1700)}});
+$("#master").addEventListener("click",()=>{let i=current,x=state(i),was=x.mix&&x.master;if(!x.master){x.mix=true;x.master=true}else x.master=false;data[i]=x;save();paint();if(!was&&x.mix&&x.master){celebrateReady(i);detail.classList.remove("disco");void detail.offsetWidth;detail.classList.add("disco");setTimeout(()=>{detail.classList.remove("disco");paintDetail()},1100)}});
 $("#openProject").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");h.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(.985)"}],{duration:260,easing:"ease-out"}).onfinish=()=>{h.style.display="none";p.classList.add("show");window.scrollTo(0,0)}});
 $("#back").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");p.classList.remove("show");p.style.display="none";h.style.display="block";h.animate([{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.75,.25,1)"});window.scrollTo(0,0)});
+
+const artBtn=$("#albumArtButton"),artInput=$("#albumArtInput");
+if(artBtn&&artInput){
+ artBtn.addEventListener("click",()=>artInput.click());
+ artInput.addEventListener("change",async()=>{
+  const file=artInput.files&&artInput.files[0];if(!file)return;
+  if(!file.type.startsWith("image/"))return;
+  try{await saveArt(file);const img=$("#albumArtImage");img.src=URL.createObjectURL(file);artBtn.classList.add("has-art");haptic(18)}catch(e){}
+ });
+ loadArt();
+}
+
 paint();
 })();
 </script></body></html>
