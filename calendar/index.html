@@ -152,6 +152,47 @@ body{
 .panel{background:linear-gradient(155deg,rgba(45,50,61,.94),rgba(15,18,24,.96))!important}
 .dayhint{margin-top:15px;color:#6f7886;text-align:center;font-size:10px;letter-spacing:.05em}
 
+
+/* HQ Calendar — single primary action */
+.app{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
+.captureDock{
+  display:block!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.captureDock .captureBtn{
+  width:100%;
+  min-height:78px;
+  border-radius:999px;
+  color:#f8fbff;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.13em;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.13),transparent 47%),
+    linear-gradient(180deg,rgba(21,27,37,.96),rgba(7,11,17,.94));
+  border:1px solid rgba(210,225,244,.55);
+  border-top-color:rgba(247,251,255,.92);
+  border-left-color:rgba(180,124,255,.68);
+  border-bottom-color:rgba(180,124,255,.52);
+  box-shadow:
+    inset 0 8px 18px -16px rgba(255,255,255,.95),
+    inset 10px 0 22px -19px rgba(180,124,255,.95),
+    0 15px 34px rgba(0,0,0,.48),
+    0 0 30px rgba(180,124,255,.12);
+}
+.captureDock .captureBtn:active{
+  transform:scale(.985);
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.16),transparent 47%),
+    linear-gradient(180deg,rgba(27,34,46,.98),rgba(9,14,21,.96));
+}
+.capturePlus{font-size:20px;vertical-align:-1px;margin-right:5px}
+
 </style>
 </head>
 <body>
@@ -160,14 +201,11 @@ body{
  <div class="top"><div class="weekday" id="weekday"></div><div class="datebox"><b id="dateNum"></b><span id="monthTop"></span></div></div>
  <div class="monthbar"><div class="monthtitle" id="monthTitle"></div><div class="monthnav"><button class="circle" id="prev" type="button">‹</button><button class="circle" id="next" type="button">›</button></div></div>
  <div class="viewtoggle"><button id="weekView" class="active" type="button">VECKA</button><button id="monthView" type="button">MÅNAD</button></div><section class="calendar"><div class="weekhead"><div class="vh">V</div><div>M</div><div>T</div><div>O</div><div>T</div><div>F</div><div>L</div><div>S</div></div><div id="grid"></div></section>
- <section class="todaysec"><div class="todayhead"><h2 id="selectedHeading">Idag</h2><span id="todayCount">0 AKTIVITETER</span></div><div id="todayEvents"></div><div class="dayhint">Tryck på en dag · håll inne för att lägga till</div></section>
+ <section class="todaysec"><div class="todayhead"><h2 id="selectedHeading">Idag</h2><span id="todayCount">0 AKTIVITETER</span></div><div id="todayEvents"></div><div class="dayhint">Tryck på en dag · skapa nytt med knappen nedan</div></section>
 </main>
 
-<section class="placeholder" id="work"><button class="back" data-back type="button">‹</button><div class="kicker" style="margin-top:18px">HQ // WORKSPACE</div><h1>Jobb</h1><div class="blank">Inget innehåll här ännu.</div></section>
-<section class="placeholder" id="music"><button class="back" data-back type="button">‹</button><div class="kicker" style="margin-top:18px">HQ // THE RACK</div><h1>Musik</h1><div class="blank">THE RACK kopplas tillbaka här i nästa steg.</div></section>
-<section class="placeholder" id="private"><button class="back" data-back type="button">‹</button><div class="kicker" style="margin-top:18px">HQ // HOME</div><h1>Privat</h1><div class="blank">Inget innehåll här ännu.</div></section>
 
-<nav class="dock" id="dock"><button class="active" data-page="home"><span class="ico">▦</span>KALENDER</button><button data-page="work"><span class="ico">▤</span>JOBB</button><button data-page="music"><span class="ico">◉</span>MUSIK</button><button data-page="private"><span class="ico">⌂</span>PRIVAT</button></nav>
+<nav class="dock captureDock" id="dock"><button class="captureBtn" id="newActivity" type="button"><span class="capturePlus">＋</span> NY AKTIVITET</button></nav>
 
 <div class="sheet" id="sheet"><section class="panel"><div class="handle"></div><h3 id="dayTitle"></h3><div class="sub" id="dayWeek"></div><div class="dayevents" id="dayEvents"></div><div class="form"><input id="eventText" placeholder="Ny aktivitet…"><div class="types"><button class="type sel" data-type="PRIVAT" type="button">PRIVAT</button><button class="type" data-type="JOBB" type="button">JOBB</button><button class="type" data-type="MUSIK" type="button">MUSIK</button></div><input id="eventTime" type="time"><div class="actions"><button id="cancel" type="button">Stäng</button><button class="add" id="add" type="button">Lägg till</button></div></div></section></div>
 
