@@ -251,6 +251,15 @@ $("#add").onclick=()=>{const text=$("#eventText").value.trim();if(!text){$("#eve
 $("#cancel").onclick=closeSheet;$("#sheet").addEventListener("click",e=>{if(e.target===$("#sheet"))closeSheet()});
 function page(id){["home","work","music","private"].forEach(x=>{const e=$("#"+x);if(x==="home")e.style.display=x===id?"block":"none";else e.classList.toggle("open",x===id)});$("#dock").style.display=id==="home"?"grid":"none";window.scrollTo(0,0)}
 $$("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));$$("[data-back]").forEach(b=>b.onclick=()=>page("home"));
+// Primary calendar action
+const newActivityBtn=document.getElementById("newActivity");
+if(newActivityBtn){
+ newActivityBtn.addEventListener("click",()=>{
+   openDay(selected,true);
+   setTimeout(()=>document.getElementById("eventText")?.focus(),180);
+ });
+}
+
 render();
 })();
 </script>
