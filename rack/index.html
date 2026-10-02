@@ -598,6 +598,153 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
   display:none!important;
 }
 
+
+/* ===== TICKER / DRAG SORT / DOUBLE-TAP EDIT ===== */
+.track-ticker{
+  position:relative!important;
+  overflow:hidden!important;
+  max-width:100%!important;
+  padding-right:26px!important; /* safety zone before controls */
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.track-ticker-inner{
+  display:inline-block!important;
+  width:max-content!important;
+  max-width:none!important;
+  white-space:nowrap!important;
+  will-change:transform;
+}
+.track-ticker.is-scrolling{
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8px,#000 calc(100% - 16px),transparent 100%)!important;
+  mask-image:linear-gradient(90deg,transparent 0,#000 8px,#000 calc(100% - 16px),transparent 100%)!important;
+}
+.track-ticker.is-scrolling .track-ticker-inner{
+  animation:hqTicker var(--ticker-duration,8s) ease-in-out 1s infinite alternate;
+}
+@keyframes hqTicker{
+  0%,12%{transform:translateX(0)}
+  88%,100%{transform:translateX(calc(-1 * var(--ticker-distance,0px)))}
+}
+.track.dragging{
+  opacity:.88!important;
+  transform:scale(1.025)!important;
+  z-index:50!important;
+  box-shadow:0 22px 50px rgba(0,0,0,.58),0 0 0 1px rgba(91,205,255,.40)!important;
+}
+.track.drag-over{
+  transform:translateY(5px)!important;
+}
+.track{touch-action:pan-y}
+.track.is-drag-ready{filter:brightness(1.13)}
+.track-order-hint{
+  position:fixed;left:50%;bottom:30px;transform:translateX(-50%);
+  z-index:9999;padding:10px 16px;border-radius:999px;
+  background:rgba(12,19,28,.92);border:1px solid rgba(183,213,240,.32);
+  color:#eaf4ff;font:800 10px ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.08em;box-shadow:0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.hq-edit-sheet{
+  position:fixed;inset:0;z-index:10000;display:none;align-items:flex-end;
+  background:rgba(0,0,0,.52);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
+}
+.hq-edit-sheet.open{display:flex}
+.hq-edit-card{
+  width:100%;padding:22px 22px calc(22px + env(safe-area-inset-bottom));
+  border-radius:30px 30px 0 0;
+  background:linear-gradient(160deg,rgba(26,34,46,.98),rgba(7,11,18,.99));
+  border:1px solid rgba(194,217,241,.30);border-bottom:0;
+  box-shadow:inset 0 1px rgba(255,255,255,.10),0 -18px 50px rgba(0,0,0,.5)
+}
+.hq-edit-card h3{margin:0 0 17px;font-size:22px}
+.hq-edit-card label{display:block;margin:14px 0 7px;font:800 9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#8996a9}
+.hq-edit-card input{
+  width:100%;box-sizing:border-box;border-radius:17px;border:1px solid rgba(164,191,220,.25);
+  background:#080d14;color:#fff;padding:15px;font:700 16px system-ui,-apple-system,sans-serif;outline:none
+}
+.hq-edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.hq-edit-actions button{
+  min-height:52px;border-radius:17px;border:1px solid rgba(170,197,225,.25);
+  background:rgba(25,34,46,.92);color:#fff;font-weight:850
+}
+.hq-edit-actions .save{background:#f3f6fb;color:#08101a}
+
+
+/* ===== HQ TICKER V2 — continuous news crawl ===== */
+.track-ticker{
+  position:relative!important;
+  overflow:hidden!important;
+  padding-right:22px!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.track-ticker.is-scrolling{
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 18px),transparent 100%)!important;
+  mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 18px),transparent 100%)!important;
+}
+.track-ticker.is-scrolling .track-ticker-inner{
+  animation:none!important;
+}
+.hq-ticker-belt{
+  display:flex!important;
+  width:max-content!important;
+  align-items:center!important;
+  white-space:nowrap!important;
+  will-change:transform;
+  animation:hqNewsTicker var(--ticker-duration,10s) linear infinite!important;
+}
+.hq-ticker-copy{
+  flex:none!important;
+  white-space:nowrap!important;
+  padding-right:42px!important;
+}
+@keyframes hqNewsTicker{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(calc(-1 * var(--ticker-loop,0px)),0,0)}
+}
+
+/* ===== dedicated drag handle ===== */
+.track .dots{
+  position:relative!important;
+  width:44px!important;
+  min-width:44px!important;
+  height:58px!important;
+  margin:-10px -9px -10px 0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:16px!important;
+  touch-action:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  cursor:grab!important;
+  font-size:0!important;
+  z-index:8!important;
+}
+.track .dots::before{
+  content:"⋮"!important;
+  font-size:23px!important;
+  line-height:1!important;
+  color:#8e9aad!important;
+  letter-spacing:0!important;
+}
+.track .dots:active,.track .dots.drag-handle-active{
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:inset 0 0 0 1px rgba(180,210,238,.16)!important;
+  cursor:grabbing!important;
+}
+.track.dragging{
+  pointer-events:none!important;
+  opacity:.92!important;
+  transform:scale(1.018)!important;
+  z-index:999!important;
+}
+body.hq-sorting{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
@@ -810,7 +957,7 @@ function paint(){
  $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";$("#readyCount").textContent=ready;$("#openCount").textContent=names.length-ready;$("#allCount").textContent=names.length;$("#percent").textContent=Math.round(ready/names.length*100)+"%";
  $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
  applyFilter(false);
- if(current!==null)paintDetail();
+ if(current!==null)paintDetail();setTimeout(()=>{rebuildNewsTickers();bindHQSortHandles();},30);
 }
 function paintDetail(){
  let x=state(current), c=x.mix&&x.master?"#55e39a":x.mix?"#ffb14e":"#ff6477";detail.style.setProperty("--c",c);
@@ -950,6 +1097,260 @@ if(overviewBtn)overviewBtn.addEventListener("click",e=>{
  window.scrollTo(0,0);haptic(12);
 });
 
+
+/* ===== HQ interaction upgrade ===== */
+const ORDER_KEY="hq-rack-v3-order";
+let trackOrder=(()=>{try{const x=JSON.parse(localStorage.getItem(ORDER_KEY)||"[]");return Array.isArray(x)&&x.length===names.length?x:names.map((_,i)=>i)}catch(e){return names.map((_,i)=>i)}})();
+
+function applySavedOrder(){
+ const rack=document.querySelector(".rack");
+ if(!rack)return;
+ trackOrder.forEach(i=>{const c=cards.find(x=>+x.dataset.i===i);if(c)rack.appendChild(c)});
+}
+function saveOrder(){
+ trackOrder=[...document.querySelectorAll(".rack .track")].map(c=>+c.dataset.i);
+ localStorage.setItem(ORDER_KEY,JSON.stringify(trackOrder));
+}
+function refreshTickers(){
+ requestAnimationFrame(()=>{
+  document.querySelectorAll(".track").forEach(c=>{
+   const box=c.querySelector(".track-ticker"), inner=c.querySelector(".track-ticker-inner");
+   if(!box||!inner)return;
+   box.classList.remove("is-scrolling");
+   inner.style.removeProperty("--ticker-distance");
+   inner.style.removeProperty("--ticker-duration");
+   inner.style.transform="translateX(0)";
+   // Reserve 28px before MIX/MASTER so letters never die inside the fade.
+   const available=Math.max(0,box.clientWidth-28);
+   const overflow=Math.ceil(inner.scrollWidth-available);
+   if(overflow>2){
+     inner.style.setProperty("--ticker-distance",(overflow+18)+"px");
+     inner.style.setProperty("--ticker-duration",Math.max(6,Math.min(12,(overflow+available)/34))+"s");
+     box.classList.add("is-scrolling");
+   }
+  });
+ });
+}
+window.addEventListener("resize",refreshTickers);
+setTimeout(refreshTickers,120);
+
+/* iPhone-friendly long-press drag sorting */
+let dragCard=null,holdTimer=null,startX=0,startY=0,dragStarted=false;
+function hint(text){
+ let h=document.querySelector(".track-order-hint");
+ if(!h){h=document.createElement("div");h.className="track-order-hint";document.body.appendChild(h)}
+ h.textContent=text;clearTimeout(h._t);h._t=setTimeout(()=>h.remove(),1200);
+}
+function beginDrag(c){
+ dragCard=c;dragStarted=true;c.classList.add("dragging");document.body.style.userSelect="none";
+ if(navigator.vibrate)navigator.vibrate(18);hint("FLYTTA LÅTEN");
+}
+function endDrag(){
+ clearTimeout(holdTimer);
+ if(dragCard){dragCard.classList.remove("dragging","is-drag-ready");saveOrder();refreshTickers()}
+ document.querySelectorAll(".track.drag-over").forEach(x=>x.classList.remove("drag-over"));
+ dragCard=null;dragStarted=false;document.body.style.userSelect="";
+}
+cards.forEach(c=>{
+ c.addEventListener("pointerdown",e=>{
+   if(e.target.closest(".mix-pill,.master-pill,.dots"))return;
+   startX=e.clientX;startY=e.clientY;dragStarted=false;
+   /* old whole-card long-press disabled; drag now starts only from handle */
+ },{passive:true});
+ c.addEventListener("pointermove",e=>{
+   if(!dragStarted){
+     if(Math.hypot(e.clientX-startX,e.clientY-startY)>12)clearTimeout(holdTimer);
+     return;
+   }
+   e.preventDefault();
+   const target=document.elementFromPoint(e.clientX,e.clientY)?.closest(".track");
+   if(target&&target!==dragCard){
+     document.querySelectorAll(".track.drag-over").forEach(x=>x.classList.remove("drag-over"));
+     target.classList.add("drag-over");
+     const r=target.getBoundingClientRect();
+     target.parentNode.insertBefore(dragCard,e.clientY<r.top+r.height/2?target:target.nextSibling);
+   }
+ },{passive:false});
+ c.addEventListener("pointerup",endDrag);
+ c.addEventListener("pointercancel",endDrag);
+});
+
+/* Double tap = rename and/or add a task */
+let editIndex=null,lastTapAt=0,lastTapCard=null;
+const editSheet=document.getElementById("hqEditSheet");
+function openQuickEdit(i){
+ editIndex=i;
+ document.getElementById("hqEditName").value=names[i]||"";
+ document.getElementById("hqEditTask").value="";
+ editSheet.classList.add("open");editSheet.setAttribute("aria-hidden","false");
+ setTimeout(()=>document.getElementById("hqEditName").focus(),120);
+}
+cards.forEach(c=>{
+ c.addEventListener("click",e=>{
+   if(dragStarted||e.target.closest(".mix-pill,.master-pill,.dots"))return;
+   const now=Date.now();
+   if(lastTapCard===c&&now-lastTapAt<330){
+     e.preventDefault();e.stopImmediatePropagation();
+     openQuickEdit(+c.dataset.i);lastTapAt=0;lastTapCard=null;
+   }else{lastTapAt=now;lastTapCard=c}
+ },true);
+});
+document.getElementById("hqEditCancel").addEventListener("click",()=>{
+ editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true");
+});
+editSheet.addEventListener("click",e=>{
+ if(e.target===editSheet)document.getElementById("hqEditCancel").click();
+});
+document.getElementById("hqEditSave").addEventListener("click",()=>{
+ if(editIndex===null)return;
+ const nm=document.getElementById("hqEditName").value.trim();
+ const task=document.getElementById("hqEditTask").value.trim();
+ if(nm)names[editIndex]=nm;
+ if(task){
+   const meta=getMeta(editIndex);
+   meta.tasks=Array.isArray(meta.tasks)?meta.tasks:[];
+   meta.tasks.push({text:task,done:false});
+   setMeta(editIndex,meta);
+ }
+ try{localStorage.setItem("hq-rack-v3-names",JSON.stringify(names))}catch(e){}
+ editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true");
+ paint();refreshTickers();haptic(16);
+});
+applySavedOrder();
+
+
+/* ===== TICKER V2: endless, seamless news-style loop ===== */
+function rebuildNewsTickers(){
+  document.querySelectorAll(".track").forEach(c=>{
+    const box=c.querySelector(".track-ticker");
+    if(!box)return;
+
+    // Restore a clean source string even if this has already been rebuilt.
+    let source=box.dataset.tickerText;
+    if(!source){
+      const old=box.querySelector(".track-ticker-inner");
+      source=(old?old.textContent:box.textContent).trim();
+      box.dataset.tickerText=source;
+    }
+
+    box.classList.remove("is-scrolling");
+    box.innerHTML="";
+    const probe=document.createElement("span");
+    probe.className="track-ticker-inner";
+    probe.textContent=source;
+    box.appendChild(probe);
+
+    requestAnimationFrame(()=>{
+      const safeWidth=Math.max(20,box.clientWidth-28);
+      const textWidth=probe.scrollWidth;
+
+      // Only long text crawls. Short status stays still.
+      if(textWidth>safeWidth){
+        box.classList.add("is-scrolling");
+        const belt=document.createElement("span");
+        belt.className="hq-ticker-belt";
+
+        const a=document.createElement("span");
+        a.className="hq-ticker-copy";
+        a.textContent=source;
+
+        const b=a.cloneNode(true);
+        belt.append(a,b);
+        box.innerHTML="";
+        box.appendChild(belt);
+
+        requestAnimationFrame(()=>{
+          const loop=a.getBoundingClientRect().width;
+          belt.style.setProperty("--ticker-loop",loop+"px");
+          // Constant readable speed ~31 px/s, never pauses or reverses.
+          belt.style.setProperty("--ticker-duration",Math.max(5.5,loop/31)+"s");
+        });
+      }
+    });
+  });
+}
+window.addEventListener("resize",()=>setTimeout(rebuildNewsTickers,50));
+setTimeout(rebuildNewsTickers,180);
+
+
+/* ===== SORT V2: grab the large three-dot handle and move freely ===== */
+let hqSortCard=null,hqSortHandle=null,hqSortPointer=null,hqSortLastY=0,hqAutoScrollRAF=null;
+
+function hqPersistOrder(){
+  const ordered=[...document.querySelectorAll(".rack .track")].map(c=>+c.dataset.i);
+  try{localStorage.setItem("hq-rack-v3-order",JSON.stringify(ordered))}catch(e){}
+  trackOrder=ordered;
+}
+function hqAutoScroll(){
+  if(!hqSortCard)return;
+  const edge=105, y=hqSortLastY, h=window.innerHeight;
+  let dy=0;
+  if(y<edge)dy=-Math.max(5,(edge-y)*.16);
+  else if(y>h-edge)dy=Math.max(5,(y-(h-edge))*.16);
+  if(dy)window.scrollBy(0,dy);
+  hqAutoScrollRAF=requestAnimationFrame(hqAutoScroll);
+}
+function hqStartSort(e,handle){
+  const card=handle.closest(".track");
+  if(!card)return;
+  e.preventDefault();e.stopPropagation();
+  hqSortCard=card;hqSortHandle=handle;hqSortPointer=e.pointerId;hqSortLastY=e.clientY;
+  handle.setPointerCapture?.(e.pointerId);
+  card.classList.add("dragging");
+  handle.classList.add("drag-handle-active");
+  document.body.classList.add("hq-sorting");
+  if(navigator.vibrate)navigator.vibrate(18);
+  cancelAnimationFrame(hqAutoScrollRAF);
+  hqAutoScrollRAF=requestAnimationFrame(hqAutoScroll);
+}
+function hqMoveSort(e){
+  if(!hqSortCard||e.pointerId!==hqSortPointer)return;
+  e.preventDefault();e.stopPropagation();
+  hqSortLastY=e.clientY;
+  const candidates=[...document.querySelectorAll(".rack .track:not(.dragging):not([hidden])")];
+  let target=null;
+  for(const c of candidates){
+    const r=c.getBoundingClientRect();
+    if(e.clientY>=r.top && e.clientY<=r.bottom){target=c;break}
+  }
+  if(!target){
+    target=candidates.reduce((best,c)=>{
+      const r=c.getBoundingClientRect(),d=Math.abs(e.clientY-(r.top+r.height/2));
+      return !best||d<best.d?{c,d}:best;
+    },null)?.c;
+  }
+  if(target){
+    const r=target.getBoundingClientRect();
+    const before=e.clientY<r.top+r.height/2;
+    target.parentNode.insertBefore(hqSortCard,before?target:target.nextSibling);
+  }
+}
+function hqEndSort(e){
+  if(!hqSortCard)return;
+  if(e && hqSortPointer!==null && e.pointerId!==hqSortPointer)return;
+  cancelAnimationFrame(hqAutoScrollRAF);
+  try{hqSortHandle?.releasePointerCapture?.(hqSortPointer)}catch(_){}
+  hqSortCard.classList.remove("dragging");
+  hqSortHandle?.classList.remove("drag-handle-active");
+  document.body.classList.remove("hq-sorting");
+  hqPersistOrder();
+  hqSortCard=hqSortHandle=hqSortPointer=null;
+  setTimeout(rebuildNewsTickers,30);
+}
+function bindHQSortHandles(){
+  document.querySelectorAll(".track .dots").forEach(handle=>{
+    if(handle.dataset.sortBound)return;
+    handle.dataset.sortBound="1";
+    handle.setAttribute("aria-label","Håll och dra för att flytta låten");
+    handle.addEventListener("pointerdown",e=>hqStartSort(e,handle),{passive:false});
+    handle.addEventListener("pointermove",hqMoveSort,{passive:false});
+    handle.addEventListener("pointerup",hqEndSort,{passive:false});
+    handle.addEventListener("pointercancel",hqEndSort,{passive:false});
+  });
+}
+bindHQSortHandles();
+setTimeout(bindHQSortHandles,100);
+
 const artBtn=$("#albumArtButton"),artInput=$("#albumArtInput");
 if(artBtn&&artInput){
  artBtn.addEventListener("click",()=>artInput.click());
@@ -963,7 +1364,22 @@ if(artBtn&&artInput){
 
 paint();
 })();
-</script></body></html><style>
+</script>
+<div class="hq-edit-sheet" id="hqEditSheet" aria-hidden="true">
+  <div class="hq-edit-card">
+    <h3>Redigera låt</h3>
+    <label>LÅTNAMN</label>
+    <input id="hqEditName" autocomplete="off">
+    <label>NY UPPGIFT</label>
+    <input id="hqEditTask" autocomplete="off" placeholder="T.ex. spela in adlibs">
+    <div class="hq-edit-actions">
+      <button type="button" id="hqEditCancel">Avbryt</button>
+      <button type="button" class="save" id="hqEditSave">Spara</button>
+    </div>
+  </div>
+</div>
+
+</body></html><style>
 /* HQ DESIGN SYSTEM — CTRL ROOM PHYSICS / RACK IDENTITY */
 :root{--hq-glass-border:rgba(160,188,219,.34);--hq-glass-top:rgba(226,239,252,.48)}
 body{background:radial-gradient(ellipse 95% 34% at 20% -4%,rgba(25,94,145,.18),transparent 68%),radial-gradient(ellipse 80% 22% at 78% 25%,rgba(255,44,132,.045),transparent 72%),#01050a!important}
