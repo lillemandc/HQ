@@ -149,37 +149,19 @@ $("#importFile").addEventListener("change",async e=>{
 $("#date").textContent=new Date().toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();render();</script>
 <script id="hq-swipe-nav">
 (() => {
-  let startX = 0, startY = 0, active = false;
-
-  document.addEventListener("touchstart", (e) => {
-    if (e.touches.length !== 1) return;
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-    active = true;
-  }, {passive:true});
-
-  document.addEventListener("touchend", (e) => {
-    if (!active || !e.changedTouches.length) return;
-    active = false;
-
-    const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
-
-    // Must be a clear horizontal swipe.
-    if (Math.abs(dx) < 70) return;
-    if (Math.abs(dx) <= Math.abs(dy) * 1.25) return;
-
-    // Finger moves LEFT -> THE RACK
-    if (dx < 0) {
-      location.href = "rack/index.html";
-      return;
-    }
-
-    // Finger moves RIGHT -> HOME
-    location.href = "home/index.html";
-  }, {passive:true});
+  let startX=0,startY=0,active=false;
+  document.addEventListener("touchstart",e=>{
+    if(e.touches.length!==1)return;
+    const t=e.touches[0]; startX=t.clientX; startY=t.clientY; active=true;
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!active||!e.changedTouches.length)return;
+    active=false;
+    const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;
+    if(Math.abs(dx)<70||Math.abs(dx)<=Math.abs(dy)*1.25)return;
+    if(dx<0) location.href="calendar/index.html";
+    else location.href="home/index.html";
+  },{passive:true});
 })();
 </script>
 
