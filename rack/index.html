@@ -149,6 +149,51 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
 .track.partial .track-led{background:var(--rack-amber)!important;box-shadow:0 0 7px var(--rack-amber),0 0 16px rgba(255,173,54,.45)!important}
 @media(max-width:430px){.wrap,.shell,main{padding-left:14px!important;padding-right:14px!important}}
 
+
+/* === TICKER FIX === */
+.track-copy{
+  min-width:0!important;
+  flex:1 1 auto!important;
+  overflow:hidden!important;
+  align-self:center!important;
+}
+.track-ticker{
+  display:block!important;
+  position:relative!important;
+  width:100%!important;
+  height:12px!important;
+  line-height:12px!important;
+  margin:3px 0 0 0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 88%,transparent 100%)!important;
+  mask-image:linear-gradient(90deg,#000 0%,#000 88%,transparent 100%)!important;
+}
+.track-ticker-inner{
+  display:block!important;
+  width:max-content!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:0!important;
+  transform:translate3d(0,0,0);
+  white-space:nowrap!important;
+  color:#8f99a9!important;
+  font:500 8px/12px ui-monospace,SFMono-Regular,Menlo,monospace!important;
+  letter-spacing:.035em!important;
+}
+.track-ticker-inner.scroll{
+  animation:hqTickerFixed var(--ticker-speed,10s) linear infinite!important;
+  will-change:transform;
+}
+.track-ticker-inner .ticker-copy{padding-right:34px}
+@keyframes hqTickerFixed{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(var(--ticker-distance,-150px),0,0)}
+}
+/* Don't let the right badge crush the task line */
+.track-state{flex:0 0 auto!important;margin-left:4px!important}
+.arrow{flex:0 0 auto!important}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
@@ -284,10 +329,24 @@ function tickerText(i){
  return parts.length?parts.join("   •   "):"✓ READY";
 }
 function setTicker(el,text){
- el.classList.remove("scroll");el.textContent=text;
- requestAnimationFrame(()=>{const box=el.parentElement,overflow=el.scrollWidth-box.clientWidth;
-  if(overflow>4){el.style.setProperty("--ticker-from",box.clientWidth+"px");el.style.setProperty("--ticker-to",-(el.scrollWidth+18)+"px");el.style.setProperty("--ticker-speed",Math.max(7,(el.scrollWidth+box.clientWidth)/34)+"s");el.classList.add("scroll")}
- });
+  el.classList.remove("scroll");
+  el.style.removeProperty("--ticker-distance");
+  el.style.removeProperty("--ticker-speed");
+  el.textContent=text;
+  requestAnimationFrame(()=>{
+    const box=el.parentElement;
+    if(!box)return;
+    const natural=el.scrollWidth;
+    if(natural>box.clientWidth+3){
+      el.innerHTML='<span class="ticker-copy"></span><span class="ticker-copy"></span>';
+      el.children[0].textContent=text+"   •   ";
+      el.children[1].textContent=text+"   •   ";
+      const distance=el.children[0].getBoundingClientRect().width;
+      el.style.setProperty("--ticker-distance",(-distance)+"px");
+      el.style.setProperty("--ticker-speed",Math.max(8,distance/22)+"s");
+      el.classList.add("scroll");
+    }
+  });
 }
 
 const ART_DB="hq-media-v1", ART_STORE="covers", ART_KEY="blodstank-skalar";
@@ -330,7 +389,7 @@ function paintDetail(){
  $("#dchannel").textContent="CHANNEL "+String(current+1).padStart(2,"0");$("#dname").textContent=names[current];
  const box=$("#tasks"), ts=tasksFor(current);box.innerHTML="";
  if(!ts.length){box.innerHTML='<div style="color:#6f7783;font-size:12px;padding:3px 2px">Inga extra uppgifter</div>'}
- ts.forEach((t,j)=>{let lab=document.createElement("label");lab.className="task"+(t.done?" done":"");let cb=document.createElement("input");cb.type="checkbox";cb.checked=!!t.done;let sp=document.createElement("span");sp.textContent=t.text;cb.addEventListener("change",()=>{t.done=cb.checked;save();paintDetail();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}});lab.append(cb,sp);box.appendChild(lab)});
+ ts.forEach((t,j)=>{let lab=document.createElement("label");lab.className="task"+(t.done?" done":"");let cb=document.createElement("input");cb.type="checkbox";cb.checked=!!t.done;let sp=document.createElement("span");sp.textContent=t.text;cb.addEventListener("change",()=>{t.done=cb.checked;save();paint();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}});lab.append(cb,sp);box.appendChild(lab)});
  [["#mix","mix"],["#master","master"]].forEach(a=>{let b=$(a[0]),on=x[a[1]];b.classList.toggle("done",on);b.querySelector("span").textContent=on?"✓ READY":"NOT READY"});
 }
 function openTrack(card,i){
