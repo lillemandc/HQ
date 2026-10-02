@@ -589,6 +589,15 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
   .mix-pill,.master-pill{min-width:45px!important;padding:0 7px!important}
 }
 
+
+/* === FILTER FIX ===
+   .track uses display:grid !important for layout, so hidden must also be !important.
+*/
+.track[hidden],
+.track.is-filtered-out{
+  display:none!important;
+}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
@@ -890,7 +899,8 @@ function applyFilter(animate=true){
     (activeFilter==="ready"&&isReady) ||
     (activeFilter==="open"&&!isReady);
   c.hidden=!visible;
-  c.style.display=visible?"grid":"none";
+  c.classList.toggle("is-filtered-out",!visible);
+  c.setAttribute("aria-hidden",visible?"false":"true");
  });
  if(sortOpenFirst){
    [...cards].sort((a,b)=>{
@@ -910,7 +920,11 @@ document.querySelectorAll(".rack-filter").forEach(btn=>{
  btn.addEventListener("click",e=>{
   e.preventDefault();e.stopPropagation();
   activeFilter=btn.dataset.filter;
-  document.querySelectorAll(".rack-filter").forEach(b=>b.classList.toggle("active",b===btn));
+  document.querySelectorAll(".rack-filter").forEach(b=>{
+    const selected=b===btn;
+    b.classList.toggle("active",selected);
+    b.setAttribute("aria-pressed",selected?"true":"false");
+  });
   applyFilter(true);
   haptic(12);
  });
