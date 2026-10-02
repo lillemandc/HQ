@@ -953,7 +953,7 @@ function celebrateReady(i){
 
 function paint(){
  let ready=0;
- cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));let mp=c.querySelector(".mix-pill"),mtp=c.querySelector(".master-pill");if(mp)mp.classList.toggle("on",x.mix);if(mtp)mtp.classList.toggle("on",x.master);setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
+ cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));let mp=c.querySelector(".mix-pill"),mtp=c.querySelector(".master-pill");if(mp)mp.classList.toggle("on",x.mix);if(mtp)mtp.classList.toggle("on",x.master);const tickerBox=c.querySelector(".track-ticker"); if(tickerBox) tickerBox.dataset.tickerText=tickerText(i); setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
  $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";$("#readyCount").textContent=ready;$("#openCount").textContent=names.length-ready;$("#allCount").textContent=names.length;$("#percent").textContent=Math.round(ready/names.length*100)+"%";
  $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
  applyFilter(false);
@@ -1176,10 +1176,11 @@ cards.forEach(c=>{
 });
 
 /* Double tap = rename and/or add a task */
-let editIndex=null,lastTapAt=0,lastTapCard=null;
-const editSheet=document.getElementById("hqEditSheet");
+let quickEditIndex=null,lastTapAt=0,lastTapCard=null;
+let editSheet=null;
 function openQuickEdit(i){
- editIndex=i;
+ quickEditIndex=i;
+ editSheet=document.getElementById("hqEditSheet");
  document.getElementById("hqEditName").value=names[i]||"";
  document.getElementById("hqEditTask").value="";
  editSheet.classList.add("open");editSheet.setAttribute("aria-hidden","false");
@@ -1195,26 +1196,19 @@ cards.forEach(c=>{
    }else{lastTapAt=now;lastTapCard=c}
  },true);
 });
-document.getElementById("hqEditCancel").addEventListener("click",()=>{
- editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true");
-});
-editSheet.addEventListener("click",e=>{
- if(e.target===editSheet)document.getElementById("hqEditCancel").click();
-});
-document.getElementById("hqEditSave").addEventListener("click",()=>{
- if(editIndex===null)return;
- const nm=document.getElementById("hqEditName").value.trim();
- const task=document.getElementById("hqEditTask").value.trim();
- if(nm)names[editIndex]=nm;
- if(task){
-   const meta=getMeta(editIndex);
-   meta.tasks=Array.isArray(meta.tasks)?meta.tasks:[];
-   meta.tasks.push({text:task,done:false});
-   setMeta(editIndex,meta);
- }
- try{localStorage.setItem("hq-rack-v3-names",JSON.stringify(names))}catch(e){}
- editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true");
- paint();refreshTickers();haptic(16);
+document.addEventListener("DOMContentLoaded",()=>{
+ editSheet=document.getElementById("hqEditSheet");
+ const cancel=document.getElementById("hqEditCancel"), saveBtn=document.getElementById("hqEditSave");
+ if(cancel)cancel.addEventListener("click",()=>{editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true")});
+ if(editSheet)editSheet.addEventListener("click",e=>{if(e.target===editSheet&&cancel)cancel.click()});
+ if(saveBtn)saveBtn.addEventListener("click",()=>{
+  if(quickEditIndex===null)return;
+  const nm=document.getElementById("hqEditName").value.trim(), task=document.getElementById("hqEditTask").value.trim();
+  meta[quickEditIndex]=meta[quickEditIndex]||{tasks:[]};meta[quickEditIndex].tasks=Array.isArray(meta[quickEditIndex].tasks)?meta[quickEditIndex].tasks:[];
+  if(nm){names[quickEditIndex]=nm;meta[quickEditIndex].name=nm}
+  if(task)meta[quickEditIndex].tasks.push({text:task,done:false});
+  save();editSheet.classList.remove("open");editSheet.setAttribute("aria-hidden","true");paint();refreshTickers();haptic(16);
+ });
 });
 applySavedOrder();
 
