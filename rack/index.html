@@ -129,6 +129,26 @@ button{font:inherit} .view{max-width:680px;margin:auto;padding:28px 16px 60px}
 .art-actions span{display:block;padding:8px 11px;border-radius:999px;background:rgba(5,8,12,.62);border:1px solid rgba(255,255,255,.20);-webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);font:9px ui-monospace,monospace;letter-spacing:.10em;color:#eef4fb}
 #albumArtInput{display:none}
 
+
+/* === THE RACK CONCEPT PASS === */
+:root{--rack-pink:#ff3f91;--rack-green:#36f59a;--rack-amber:#ffad36;--rack-red:#ff405f}
+body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transparent 28%),radial-gradient(circle at 50% 78%,rgba(255,42,119,.045),transparent 30%),#02060a}
+.album-art-wrap{margin:12px 0!important}
+.album-art{aspect-ratio:3.15/1!important;max-height:118px!important;border-radius:20px!important}
+.album-placeholder{gap:5px!important}.album-placeholder .art-icon{width:38px!important;height:38px!important;border-radius:11px!important;font-size:17px!important}.album-placeholder b{font-size:11px!important}.album-placeholder span{font-size:7px!important}
+.album-status{padding:12px 14px!important;border-radius:17px!important;margin:10px 0!important}.album-status .row{font-size:10px!important}.bar{height:5px!important;margin-top:8px!important}
+.track-list,.tracks{gap:7px!important}
+.track{min-height:0!important;height:68px!important;border-radius:16px!important;padding:9px 12px!important;grid-template-columns:28px minmax(0,1fr) auto!important;gap:9px!important}
+.track-led{width:13px!important;height:13px!important}.track small{font-size:8px!important;letter-spacing:.16em!important;margin-bottom:3px!important}.track strong{font-size:14px!important;line-height:1.05!important}
+.track-ticker{height:14px!important;margin-top:4px!important}.track-ticker-inner{font-size:8px!important;letter-spacing:.04em!important;color:#8c96a7!important}
+.track-state{display:flex!important;align-items:center!important;gap:5px!important}
+.track.ready{border-color:rgba(55,255,158,.58)!important;background:linear-gradient(105deg,rgba(8,38,27,.95),rgba(5,17,17,.97) 60%,rgba(8,37,26,.9))!important;box-shadow:inset 0 1px rgba(195,255,222,.28),0 0 10px rgba(50,255,151,.27),0 0 30px rgba(50,255,151,.20),0 9px 22px rgba(0,0,0,.46)!important}
+.track.ready:after{content:"";position:absolute;inset:auto 10% -15px 10%;height:27px;background:radial-gradient(ellipse,rgba(46,255,145,.42),transparent 68%);filter:blur(9px);pointer-events:none}
+.track.ready .track-led{background:var(--rack-green)!important;box-shadow:0 0 7px #42ff9e,0 0 17px rgba(54,245,154,.95),0 0 30px rgba(54,245,154,.55)!important}
+.track.ready .track-state{color:#c5ffdf!important;border:1px solid rgba(65,255,160,.38);background:rgba(31,255,135,.09);border-radius:999px;padding:5px 8px;font-size:7px!important;letter-spacing:.1em}
+.track.partial .track-led{background:var(--rack-amber)!important;box-shadow:0 0 7px var(--rack-amber),0 0 16px rgba(255,173,54,.45)!important}
+@media(max-width:430px){.wrap,.shell,main{padding-left:14px!important;padding-right:14px!important}}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
@@ -300,7 +320,7 @@ function celebrateReady(i){
 
 function paint(){
  let ready=0;
- cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.querySelector(".track-state").textContent=x.mix&&x.master?"READY":x.mix?"MASTER NEXT":"MIX NEXT";setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
+ cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));c.querySelector(".track-state").textContent=x.mix&&x.master?"● READY":x.mix?"MASTER":"MIX";setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
  $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";
  $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
  if(current!==null)paintDetail();
