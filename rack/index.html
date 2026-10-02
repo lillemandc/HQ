@@ -484,6 +484,111 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
   .mix-pill,.master-pill{min-width:42px!important;padding:0 7px!important}
 }
 
+
+/* === HQ SCALE PASS — Capture-sized tracks ===
+   Track glass = same visual weight as CTRL ROOM Capture.
+   Cover = exactly 2x track height.
+*/
+:root{
+  --hq-track-h:86px;
+  --hq-cover-size:172px;
+}
+
+/* Song glass pieces */
+.track{
+  height:var(--hq-track-h)!important;
+  min-height:var(--hq-track-h)!important;
+  border-radius:26px!important;
+  padding:13px 15px!important;
+  grid-template-columns:34px minmax(0,1fr) auto!important;
+  gap:11px!important;
+  border-top-color:rgba(225,237,250,.38)!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.09),
+    0 9px 24px rgba(0,0,0,.38)!important;
+}
+.rack{gap:11px!important}
+.track-led{width:16px!important;height:16px!important}
+.track-copy small{
+  font-size:8px!important;
+  line-height:10px!important;
+  margin-bottom:4px!important;
+}
+.track-copy strong{
+  font-size:17px!important;
+  line-height:20px!important;
+}
+.track-ticker{
+  height:15px!important;
+  line-height:15px!important;
+  margin-top:4px!important;
+}
+.track-ticker-inner{
+  font-size:9px!important;
+  line-height:15px!important;
+}
+.mix-pill,.master-pill{
+  height:35px!important;
+  min-width:52px!important;
+  padding:0 10px!important;
+  font-size:7px!important;
+}
+
+/* Project card / cover */
+.concept-project{
+  min-height:calc(var(--hq-cover-size) + 32px)!important;
+  grid-template-columns:var(--hq-cover-size) minmax(0,1fr)!important;
+  gap:18px!important;
+  padding:16px!important;
+  border-radius:28px!important;
+  align-items:center!important;
+}
+.concept-project .album-art-wrap,
+.concept-project .album-art{
+  width:var(--hq-cover-size)!important;
+  height:var(--hq-cover-size)!important;
+}
+.concept-project .album-art{
+  max-height:none!important;
+  aspect-ratio:1!important;
+  border-radius:20px!important;
+}
+.concept-project .album-placeholder .art-icon{
+  width:46px!important;height:46px!important;border-radius:14px!important;font-size:19px!important
+}
+.concept-project .album-placeholder b{font-size:9px!important}
+.project-kicker{font-size:8px!important}
+.project-name{
+  font-size:19px!important;
+  line-height:1.08!important;
+  white-space:normal!important;
+}
+.project-meta{font-size:12px!important;line-height:1.3!important}
+.project-progress-row{
+  grid-template-columns:minmax(0,1fr) 34px!important;
+  gap:8px!important;
+  margin-top:18px!important;
+}
+.project-progress-row .bar{height:7px!important}
+.project-progress-row b{font-size:10px!important}
+
+/* Give the whole Rack the same generous breathing room as CTRL ROOM */
+.filter-row{margin:18px 0 15px!important}
+.rack-filter{padding:10px 14px!important}
+.filter-menu{width:40px!important;height:40px!important;flex-basis:40px!important}
+
+/* Narrow iPhones: preserve the 2x relationship, just scale both together */
+@media(max-width:390px){
+  :root{
+    --hq-track-h:82px;
+    --hq-cover-size:164px;
+  }
+  .concept-project{gap:14px!important;padding:14px!important}
+  .track{padding:11px 11px!important}
+  .track-copy strong{font-size:16px!important}
+  .mix-pill,.master-pill{min-width:45px!important;padding:0 7px!important}
+}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
