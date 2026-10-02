@@ -401,13 +401,96 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
 
 .track.partial .master-pill{color:#8793a5!important;border-color:rgba(131,155,185,.20)!important;background:linear-gradient(180deg,rgba(29,40,53,.94),rgba(15,23,33,.95))!important;box-shadow:inset 0 1px rgba(255,255,255,.06)!important}
 
+
+/* === HQ UNIFIED SCALE + WORKING CONTROLS === */
+:root{
+  --hq-page-pad:26px;
+  --hq-radius:24px;
+  --hq-card-border:rgba(174,198,226,.28);
+}
+#projectView{
+  padding-left:var(--hq-page-pad)!important;
+  padding-right:var(--hq-page-pad)!important;
+}
+.concept-project{
+  border-radius:var(--hq-radius)!important;
+  padding:16px!important;
+}
+.track{
+  height:72px!important;
+  min-height:72px!important;
+  border-radius:22px!important;
+  padding:10px 13px!important;
+  grid-template-columns:32px minmax(0,1fr) auto!important;
+  gap:10px!important;
+}
+.track-copy small{
+  font-size:7.5px!important;
+  line-height:9px!important;
+  margin-bottom:3px!important;
+}
+.track-copy strong{
+  font-size:15px!important;
+  line-height:18px!important;
+}
+.track-ticker{
+  height:13px!important;
+  line-height:13px!important;
+  margin-top:3px!important;
+}
+.track-ticker-inner{
+  font-size:8px!important;
+  line-height:13px!important;
+}
+.track-led{width:15px!important;height:15px!important}
+.mix-pill,.master-pill{
+  height:31px!important;
+  min-width:47px!important;
+  padding:0 9px!important;
+  font-size:6.8px!important;
+}
+.filter-row{margin:15px 0 13px!important}
+.rack-filter{padding:9px 13px!important;font-size:7.5px!important}
+.filter-menu{width:38px!important;height:38px!important;flex-basis:38px!important}
+.track-actions span{touch-action:manipulation}
+.mix-pill,.master-pill,.dots{cursor:pointer}
+.mix-pill:active,.master-pill:active{transform:scale(.94)}
+.rack-filter:active,.filter-menu:active,.rack-more:active{transform:scale(.96)}
+
+/* MIX should visibly light whenever MIX is checked, not only in partial state */
+.track .mix-pill.on{
+  color:#fff0f7!important;
+  border-color:rgba(255,72,154,.58)!important;
+  background:linear-gradient(180deg,rgba(255,53,143,.88),rgba(169,24,93,.88))!important;
+  box-shadow:0 0 7px rgba(255,57,148,.55),0 0 17px rgba(255,44,137,.22),inset 0 1px rgba(255,255,255,.28)!important;
+}
+.track.ready .mix-pill.on,.track.ready .master-pill.on{
+  color:#cffff0!important;
+  border-color:rgba(63,255,158,.46)!important;
+  background:linear-gradient(180deg,rgba(29,184,105,.32),rgba(8,69,43,.34))!important;
+  box-shadow:0 0 6px rgba(50,255,150,.38),0 0 14px rgba(42,255,143,.16),inset 0 1px rgba(220,255,235,.17)!important;
+}
+.track.ready .mix-pill.on::before,.track.ready .master-pill.on::before{
+  content:"✓";margin-right:4px;color:#77ffb8
+}
+
+/* Small feedback when a filter changes */
+.rack.filter-pop{animation:filterPop .18s ease-out}
+@keyframes filterPop{0%{opacity:.72;transform:translateY(2px)}100%{opacity:1;transform:none}}
+
+@media(max-width:390px){
+  :root{--hq-page-pad:22px}
+  .track{height:70px!important;min-height:70px!important;padding:9px 10px!important}
+  .mix-pill,.master-pill{min-width:42px!important;padding:0 7px!important}
+}
+
 </style></head><body>
 <section class="view" id="rackHome"><a href="../index.html" class="back" style="display:inline-flex;text-decoration:none;align-items:center">‹ HQ</a><div class="ey">HQ / THE RACK</div><h1>THE RACK</h1><div class="sub">Projects</div>
 <button class="project glass" id="openProject" type="button"><div class="ey">LILLUMINATI RECORDS / PROJECT</div><div class="project-title">Blodstänk &amp; Skålar</div><div class="project-sub">Lilleman &amp; Juan Havana · 20 låtar</div><div class="project-foot"><span class="p-led"></span><span class="mono" id="homeCount">0 / 20 READY</span><span class="arrow">›</span></div><div class="bar"><i class="fill" id="homeFill"></i></div></button>
 <div class="note">Fler projekt kan läggas till senare.</div></section>
 
 <main class="view" id="projectView">
-<div class="rack-topline"><button class="back" id="back" type="button">‹ HQ</button><button class="rack-more" type="button" aria-label="Mer">•••</button></div>
+<div class="rack-topline"><button class="back" id="back" type="button">‹ HQ</button><button class="rack-more" id="projectOverview" type="button" aria-label="Projektöversikt" title="Projektöversikt">•••</button></div>
 <div class="rack-brand">HQ</div>
 <h1 class="rack-title">THE RACK</h1>
 <div class="rack-album-name">BLODSTÄNK &amp; SKÅLAR</div>
@@ -439,7 +522,7 @@ body{background:radial-gradient(circle at 50% 18%,rgba(0,139,190,.055),transpare
   <button class="rack-filter active" data-filter="all">ALLA <span id="allCount">20</span></button>
   <button class="rack-filter" data-filter="open">EJ KLARA <span id="openCount">20</span></button>
   <button class="rack-filter" data-filter="ready">KLARA <span id="readyCount">0</span></button>
-  <button class="filter-menu" type="button">☷</button>
+  <button class="filter-menu" id="sortTracks" type="button" aria-label="Sortera låtar" title="Sortera låtar">⇅</button>
 </div>
 
 <section class="album-status glass compact-status"><div class="status-line"><span>ALBUM STATUS</span><span id="count">0 / 20 READY</span></div></section>
@@ -612,7 +695,7 @@ function paint(){
  cards.forEach((c,i)=>{c.querySelector("strong").textContent=names[i];let x=state(i);c.classList.toggle("mix",x.mix&&!x.master);c.classList.toggle("ready",x.mix&&x.master);c.classList.toggle("partial",(x.mix||x.master)&&!(x.mix&&x.master));let mp=c.querySelector(".mix-pill"),mtp=c.querySelector(".master-pill");if(mp)mp.classList.toggle("on",x.mix);if(mtp)mtp.classList.toggle("on",x.master);setTicker(c.querySelector(".track-ticker-inner"),tickerText(i));if(x.mix&&x.master)ready++;});
  $("#count").textContent=ready+" / "+names.length+" READY";$("#homeCount").textContent=ready+" / "+names.length+" READY";$("#readyCount").textContent=ready;$("#openCount").textContent=names.length-ready;$("#allCount").textContent=names.length;$("#percent").textContent=Math.round(ready/names.length*100)+"%";
  $("#fill").style.width=$("#homeFill").style.width=(ready/names.length*100)+"%";
- cards.forEach((c,i)=>{const x=state(i),isReady=x.mix&&x.master;c.style.display=(activeFilter==="all"||(activeFilter==="ready"&&isReady)||(activeFilter==="open"&&!isReady))?"grid":"none";});
+ applyFilter(false);
  if(current!==null)paintDetail();
 }
 function paintDetail(){
@@ -645,7 +728,29 @@ cards.forEach((c,i)=>{
  c.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;longed=false;pressStart={x:e.clientX,y:e.clientY};clearTimeout(pressTimer);pressTimer=setTimeout(()=>{longed=true;showMenu(c,i,e.clientX,e.clientY)},520)});
  c.addEventListener("pointermove",e=>{if(pressStart&&Math.hypot(e.clientX-pressStart.x,e.clientY-pressStart.y)>12)clearTimeout(pressTimer)});
  ["pointerup","pointercancel","pointerleave"].forEach(ev=>c.addEventListener(ev,()=>clearTimeout(pressTimer)));
- c.addEventListener("click",e=>{if(longed){e.preventDefault();e.stopPropagation();longed=false;return}openTrack(c,i)});
+ c.addEventListener("click",e=>{
+  if(longed){e.preventDefault();e.stopPropagation();longed=false;return}
+  const mixP=e.target.closest(".mix-pill"), masterP=e.target.closest(".master-pill"), dots=e.target.closest(".dots");
+  if(mixP){
+    e.preventDefault();e.stopPropagation();
+    const x=state(i),wasReady=x.mix&&x.master;
+    x.mix=!x.mix;if(!x.mix)x.master=false;data[i]=x;save();paint();
+    if(!wasReady&&x.mix&&x.master)celebrateReady(i);
+    haptic(14);return;
+  }
+  if(masterP){
+    e.preventDefault();e.stopPropagation();
+    const x=state(i),wasReady=x.mix&&x.master;
+    x.master=!x.master;if(x.master)x.mix=true;data[i]=x;save();paint();
+    if(!wasReady&&x.mix&&x.master)celebrateReady(i);
+    haptic(14);return;
+  }
+  if(dots){
+    e.preventDefault();e.stopPropagation();
+    const r=dots.getBoundingClientRect();showMenu(c,i,r.left,r.bottom);return;
+  }
+  openTrack(c,i);
+});
 });
 document.addEventListener("pointerdown",e=>{if(!e.target.closest("#pressMenu")&&!e.target.closest(".track"))hideMenu()});
 $("#pressMenu").addEventListener("click",e=>{
@@ -667,20 +772,63 @@ $("#close").addEventListener("click",closeTrack);overlay.addEventListener("click
 $("#mix").addEventListener("click",()=>{let x=state(current);x.mix=!x.mix;if(!x.mix)x.master=false;data[current]=x;save();paint()});
 $("#master").addEventListener("click",()=>{let i=current,x=state(i),was=x.mix&&x.master;if(!x.master){x.mix=true;x.master=true}else x.master=false;data[i]=x;save();paint();if(!was&&x.mix&&x.master){celebrateReady(i);detail.classList.remove("disco");void detail.offsetWidth;detail.classList.add("disco");setTimeout(()=>{detail.classList.remove("disco");paintDetail()},1100)}});
 $("#openProject").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");h.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(.985)"}],{duration:260,easing:"ease-out"}).onfinish=()=>{h.style.display="none";p.classList.add("show");window.scrollTo(0,0)}});
-$("#back").addEventListener("click",()=>{const h=$("#rackHome"),p=$("#projectView");p.classList.remove("show");p.style.display="none";h.style.display="block";h.animate([{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.75,.25,1)"});window.scrollTo(0,0)});
+$("#back").addEventListener("click",()=>{window.location.href="../index.html"});
 
 
-let activeFilter="all";
+let activeFilter="all", sortOpenFirst=false;
+
+function applyFilter(animate=true){
+ const rack=document.querySelector(".rack");
+ cards.forEach((c,i)=>{
+  const x=state(i),isReady=!!(x.mix&&x.master);
+  const visible=activeFilter==="all" ||
+    (activeFilter==="ready"&&isReady) ||
+    (activeFilter==="open"&&!isReady);
+  c.hidden=!visible;
+  c.style.display=visible?"grid":"none";
+ });
+ if(sortOpenFirst){
+   [...cards].sort((a,b)=>{
+     const ai=+a.dataset.i,bi=+b.dataset.i;
+     const ar=state(ai).mix&&state(ai).master, br=state(bi).mix&&state(bi).master;
+     return Number(ar)-Number(br) || ai-bi;
+   }).forEach(c=>rack.appendChild(c));
+ }else{
+   [...cards].sort((a,b)=>(+a.dataset.i)-(+b.dataset.i)).forEach(c=>rack.appendChild(c));
+ }
+ if(animate&&rack){
+   rack.classList.remove("filter-pop");void rack.offsetWidth;rack.classList.add("filter-pop");
+ }
+}
+
 document.querySelectorAll(".rack-filter").forEach(btn=>{
- btn.addEventListener("click",()=>{
+ btn.addEventListener("click",e=>{
+  e.preventDefault();e.stopPropagation();
   activeFilter=btn.dataset.filter;
   document.querySelectorAll(".rack-filter").forEach(b=>b.classList.toggle("active",b===btn));
-  cards.forEach((c,i)=>{
-   const x=state(i),isReady=x.mix&&x.master;
-   c.style.display=(activeFilter==="all"||(activeFilter==="ready"&&isReady)||(activeFilter==="open"&&!isReady))?"grid":"none";
-  });
+  applyFilter(true);
   haptic(12);
  });
+});
+
+const sortBtn=$("#sortTracks");
+if(sortBtn)sortBtn.addEventListener("click",e=>{
+ e.preventDefault();e.stopPropagation();
+ sortOpenFirst=!sortOpenFirst;
+ sortBtn.classList.toggle("active",sortOpenFirst);
+ sortBtn.textContent=sortOpenFirst?"1↓":"⇅";
+ sortBtn.setAttribute("aria-label",sortOpenFirst?"Återställ låtordning":"Visa ej klara först");
+ applyFilter(true);haptic(12);
+});
+
+const overviewBtn=$("#projectOverview");
+if(overviewBtn)overviewBtn.addEventListener("click",e=>{
+ e.preventDefault();e.stopPropagation();
+ const h=$("#rackHome"),p=$("#projectView");
+ p.classList.remove("show");p.style.display="none";h.style.display="block";
+ h.animate([{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],
+ {duration:260,easing:"cubic-bezier(.2,.75,.25,1)"});
+ window.scrollTo(0,0);haptic(12);
 });
 
 const artBtn=$("#albumArtButton"),artInput=$("#albumArtInput");
