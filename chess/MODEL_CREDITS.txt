@@ -1,0 +1,6 @@
+Chess Set
+Author: Riley Queen / Poly Haven
+Source: https://polyhaven.com/a/chess_set
+License: CC0 1.0 Public Domain
+https://creativecommons.org/publicdomain/zero/1.0/
+Geometry extracted, centered and scaled; original materials replaced with glass.
