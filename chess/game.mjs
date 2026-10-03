@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {Chess} from './vendor/chess.mjs';
 const $=s=>document.querySelector(s),game=new Chess();let mode='computer',selected=null,pending=null,thinking=false,epoch=0,worker=null,renderer;
-const container=$('#board'),scene=new T.Scene(),camera=new T.PerspectiveCamera(35,1,.1,100);camera.position.set(0,13,13);camera.lookAt(0,0,0);
+const container=$('#board'),scene=new T.Scene(),camera=new T.OrthographicCamera(-4.6,4.6,4.6,-4.6,.1,100);camera.position.set(0,16,9);camera.lookAt(0,.28,0);
 try{renderer=new T.WebGLRenderer({antialias:true,alpha:true});}catch(e){$('#loading').textContent='3D-grafiken kunde inte starta. Prova Safari eller Chrome med WebGL aktiverat.';throw e;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;container.appendChild(renderer.domElement);
 const envScene=new T.Scene();envScene.background=new T.Color('#29415c');const panelMat=new T.MeshBasicMaterial({color:'#ffffff'});
@@ -12,19 +12,37 @@ const frame=new T.Mesh(new T.BoxGeometry(8.45,.2,8.45),new T.MeshStandardMateria
 const squares=[],pieces=new T.Group(),markers=new T.Group();scene.add(pieces,markers);
 for(let row=0;row<8;row++)for(let col=0;col<8;col++){const sq=String.fromCharCode(97+col)+(8-row),tile=new T.Mesh(new T.BoxGeometry(.996,.10,.996),new T.MeshStandardMaterial({color:(row+col)%2===0?0x66819d:0x172737,roughness:.6,metalness:.15}));tile.position.set(col-3.5,-.03,row-3.5);tile.receiveShadow=true;tile.userData.square=sq;scene.add(tile);squares.push(tile);}
 const white=new T.MeshPhysicalMaterial({color:0xe6f8ff,metalness:0,roughness:.08,transmission:.94,thickness:.55,ior:1.45,transparent:true,opacity:1,envMapIntensity:1.7,clearcoat:1,attenuationColor:new T.Color(0xbde5ff),attenuationDistance:5});const black=white.clone();black.color.set(0x5786b1);black.attenuationColor.set(0x22436a);black.attenuationDistance=1.4;black.transmission=.87;
+// Frosted white glass keeps a readable silhouette on both square colors.
+white.color.set(0xd9e6ef);white.roughness=.38;white.transmission=.40;white.envMapIntensity=.72;white.clearcoat=.25;white.clearcoatRoughness=.4;white.attenuationDistance=2;
+const eyeMaterial=new T.MeshStandardMaterial({color:0x203c55,roughness:.55,metalness:.15});
 const geometries={};
 function lathe(points){return new T.LatheGeometry(points.map(([r,y])=>new T.Vector2(r,y)),40);}
 const base=lathe([[0,0],[.27,0],[.32,.045],[.32,.09],[.27,.14],[.24,.17],[.27,.20],[.24,.23],[0,.23]]);
 function buildPiece(type){const parts=[{g:base}];const stem=lathe([[0,.19],[.22,.19],[.22,.25],[.17,.30],[.13,.40],[.11,.55],[.15,.61],[.22,.63],[.22,.68],[.13,.70],[0,.70]]);if(type==='p'){parts.push({g:lathe([[0,.18],[.20,.18],[.18,.25],[.12,.36],[.10,.47],[.16,.50],[.16,.55],[0,.55]])},{g:new T.SphereGeometry(.16,24,16),p:[0,.68,0]});}
 else if(type==='r'){parts.push({g:lathe([[0,.2],[.21,.2],[.20,.3],[.17,.68],[.23,.70],[.25,.76],[.25,.84],[0,.84]])});for(let i=0;i<6;i++){const a=i*Math.PI/3;parts.push({g:new T.BoxGeometry(.13,.15,.13),p:[Math.sin(a)*.20,.88,Math.cos(a)*.20],r:[0,a,0]});}}
-else if(type==='n'){parts.push({g:new T.CylinderGeometry(.15,.20,.18,28),p:[0,.3,0]});const s=new T.Shape();s.moveTo(-.19,.36);s.lineTo(-.20,.72);s.quadraticCurveTo(-.20,.98,.01,1.07);s.lineTo(.07,1.17);s.lineTo(.14,1.14);s.lineTo(.13,1.02);s.lineTo(.33,.84);s.lineTo(.32,.72);s.lineTo(.16,.72);s.lineTo(.08,.80);s.lineTo(.02,.60);s.lineTo(.22,.38);s.closePath();const g=new T.ExtrudeGeometry(s,{depth:.22,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.035});g.translate(0,0,-.11);parts.push({g,r:[0,Math.PI/2,0]});}
+else if(type==='n'){
+ parts.push({g:new T.CylinderGeometry(.16,.23,.18,32),p:[0,.30,0]});
+ const s=new T.Shape();s.moveTo(-.22,.36);
+ s.bezierCurveTo(-.23,.53,-.26,.74,-.19,.90);
+ s.quadraticCurveTo(-.13,1.03,-.04,1.07);
+ s.lineTo(-.04,1.20);s.lineTo(.04,1.16);s.lineTo(.075,1.07);
+ s.quadraticCurveTo(.15,1.01,.18,.96);
+ s.lineTo(.36,.86);s.quadraticCurveTo(.40,.81,.34,.76);
+ s.lineTo(.22,.76);s.lineTo(.09,.85);
+ s.quadraticCurveTo(.015,.70,.075,.60);
+ s.quadraticCurveTo(.16,.47,.23,.36);s.closePath();
+ const g=new T.ExtrudeGeometry(s,{depth:.24,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.035,bevelThickness:.035,curveSegments:18});g.translate(0,0,-.12);
+ // Broad side faces the player; the old 90-degree turn hid the horse profile.
+ parts.push({g});
+ for(const z of [-.154,.154])parts.push({g:new T.SphereGeometry(.026,16,12),p:[.08,.985,z],mat:eyeMaterial});
+}
 else{parts.push({g:stem});if(type==='b'){parts.push({g:lathe([[0,.67],[.14,.70],[.20,.78],[.19,.85],[.14,.95],[.04,1.07],[0,1.09]])},{g:new T.SphereGeometry(.05,16,12),p:[0,1.13,0]});}if(type==='q'){parts.push({g:lathe([[0,.69],[.14,.70],[.20,.85],[.26,.99],[.23,1.03],[.10,1.01],[.08,.91],[0,.9]])});for(let i=0;i<7;i++){const a=i*Math.PI*2/7;parts.push({g:new T.SphereGeometry(.045,16,12),p:[Math.sin(a)*.235,1.06,Math.cos(a)*.235]});}parts.push({g:new T.SphereGeometry(.065,16,12),p:[0,1.06,0]});}if(type==='k'){parts.push({g:lathe([[0,.67],[.14,.69],[.21,.74],[.22,.84],[.16,.94],[.11,.97],[0,.97]])},{g:new T.BoxGeometry(.07,.27,.075),p:[0,1.08,0]},{g:new T.BoxGeometry(.23,.065,.075),p:[0,1.10,0]});}}
 return parts;}
 for(const t of ['p','r','n','b','q','k'])geometries[t]=buildPiece(t);
 function position(square){return new T.Vector3(square.charCodeAt(0)-97-3.5,.045,8-Number(square[1])-3.5);}
 function disposeMarkers(){for(const c of [...markers.children]){c.geometry.dispose();c.material.dispose();markers.remove(c);}}
 function drawMarkers(){disposeMarkers();if(!selected)return;const legal=game.moves({square:selected,verbose:true});for(const sq of [selected,...legal.map(x=>x.to)]){const chosen=sq===selected,capture=!!game.get(sq),g=chosen||capture?new T.RingGeometry(.34,.43,40):new T.CircleGeometry(.115,24),m=new T.MeshBasicMaterial({color:chosen?0x5dd7ff:0x65efa5,transparent:true,opacity:.85,side:T.DoubleSide}),mesh=new T.Mesh(g,m);mesh.rotation.x=-Math.PI/2;mesh.position.copy(position(sq));mesh.position.y=.035;markers.add(mesh);}}
-function drawPieces(){pieces.clear();for(const row of game.board())for(const p of row){if(!p)continue;const group=new T.Group();for(const part of geometries[p.type]){const mesh=new T.Mesh(part.g,p.color==='w'?white:black);if(part.p)mesh.position.set(...part.p);if(part.r)mesh.rotation.set(...part.r);mesh.castShadow=true;mesh.userData.square=p.square;group.add(mesh);}group.position.copy(position(p.square));if(p.color==='b')group.rotation.y=Math.PI;pieces.add(group);}}
+function drawPieces(){pieces.clear();for(const row of game.board())for(const p of row){if(!p)continue;const group=new T.Group();for(const part of geometries[p.type]){const mesh=new T.Mesh(part.g,part.mat||(p.color==='w'?white:black));if(part.p)mesh.position.set(...part.p);if(part.r)mesh.rotation.set(...part.r);mesh.castShadow=true;mesh.userData.square=p.square;group.add(mesh);}group.position.copy(position(p.square));if(p.color==='b')group.rotation.y=Math.PI;pieces.add(group);}}
 function describeStatus(){if(game.isCheckmate())return(game.turn()==='w'?'Svart':'Vit')+' vinner · schackmatt';if(game.isStalemate())return'Remi · patt';if(game.isThreefoldRepetition())return'Remi · upprepning';if(game.isInsufficientMaterial())return'Remi · otillräckligt material';if(game.isDraw())return'Remi';if(thinking)return'Datorn tänker…';return(game.turn()==='w'?'Vits tur':'Svarts tur')+(game.isCheck()?' · schack':'');}
 function sync(){drawPieces();drawMarkers();$('#status').textContent=describeStatus();$('#hint').textContent=game.isGameOver()?'Starta ett nytt parti för att spela igen.':selected?'Välj en grönmarkerad ruta.':'Tryck på en pjäs för att se dina drag.';$('#undo').disabled=game.history().length===0;$('#history').innerHTML=game.history().map((x,i)=>`<li value="${Math.floor(i/2)+1}">${x}</li>`).join('');$('#accessibleBoard').innerHTML=squares.map(s=>{const p=game.get(s.userData.square);return`<button data-square="${s.userData.square}" aria-label="${s.userData.square} ${p?(p.color==='w'?'vit':'svart')+' '+({p:'bonde',n:'springare',b:'löpare',r:'torn',q:'dam',k:'kung'}[p.type]):'tom ruta'}">${s.userData.square}</button>`;}).join('');}
 function invalidate(){epoch++;thinking=false;worker?.terminate();worker=null;selected=null;pending=null;if($('#promotion').open)$('#promotion').close();}
@@ -38,7 +56,7 @@ function reset(){invalidate();game.reset();sync();}
 $('#new').onclick=()=>{if(game.history().length&&!confirm('Börja ett nytt parti?'))return;reset();};$('#undo').onclick=()=>{invalidate();if(mode==='computer'&&game.turn()==='w'&&game.history().length>=2){game.undo();game.undo();}else game.undo();sync();};
 function setMode(next){if(mode===next)return;if(game.history().length&&!confirm('Byta spelläge och börja ett nytt parti?'))return;mode=next;$('#computer').setAttribute('aria-pressed',String(mode==='computer'));$('#local').setAttribute('aria-pressed',String(mode==='local'));$('#opponent').textContent=mode==='computer'?'Dator':'Spelare 2';$('#playerName').textContent=mode==='computer'?'Du':'Spelare 1';$('#difficulty').disabled=mode!=='computer';reset();}
 $('#computer').onclick=()=>setMode('computer');$('#local').onclick=()=>setMode('local');$('#difficulty').onchange=()=>{if(thinking){invalidate();scheduleAI();}};
-function resize(){const rect=container.getBoundingClientRect();renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();}new ResizeObserver(resize).observe(container);resize();sync();$('#loading').remove();
+function resize(){const rect=container.getBoundingClientRect();renderer.setSize(rect.width,rect.height,false);const aspect=rect.width/rect.height,halfHeight=Math.max(4.45,4.6/aspect);camera.left=-halfHeight*aspect;camera.right=halfHeight*aspect;camera.top=halfHeight;camera.bottom=-halfHeight;camera.updateProjectionMatrix();}new ResizeObserver(resize).observe(container);resize();sync();$('#playerName').nextElementSibling.textContent='Frostat glas · vit';$('#loading').remove();
 renderer.setAnimationLoop(()=>renderer.render(scene,camera));document.addEventListener('visibilitychange',()=>renderer.setAnimationLoop(document.hidden?null:()=>renderer.render(scene,camera)));
 // Shared read-only state is also useful to keyboard and automated clients.
 window.hqChess={getState:()=>({fen:game.fen(),turn:game.turn(),mode,thinking,history:game.history()}),selectSquare};
