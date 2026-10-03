@@ -1,0 +1,6 @@
+import {Chess} from './vendor/chess.mjs';
+const values={p:100,n:320,b:335,r:500,q:900,k:0};
+function evaluate(g){if(g.isCheckmate())return -100000;if(g.isDraw())return 0;let score=0;for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=g.board()[r][f];if(!p)continue;const center=3.5-Math.max(Math.abs(f-3.5),Math.abs(r-3.5));const advance=p.color==='w'?6-r:r-1;score+=(p.color===g.turn()?1:-1)*(values[p.type]+(p.type==='p'?advance*7:center*(p.type==='n'?16:6)));}return score;}
+onmessage=e=>{const {fen,level,id}=e.data,g=new Chess(fen);let nodes=0;const budget=level===3?12000:2500;
+function search(depth,alpha,beta){if(depth===0||g.isGameOver()||++nodes>budget)return evaluate(g);let best=-Infinity;const ms=g.moves({verbose:true}).sort((a,b)=>(values[b.captured]||0)-(values[a.captured]||0));for(const m of ms){g.move(m);const score=-search(depth-1,-beta,-alpha);g.undo();best=Math.max(best,score);alpha=Math.max(alpha,score);if(alpha>=beta)break;}return best;}
+const ms=g.moves({verbose:true});let best=null,score=-Infinity;for(const m of ms){g.move(m);const s=-search(Number(level)-1,-Infinity,Infinity)+(level===1?Math.random()*90:Math.random()*3);g.undo();if(s>score){score=s;best={from:m.from,to:m.to,promotion:m.promotion};}}postMessage({id,move:best});};
